@@ -3,14 +3,14 @@
 @import "shadcn/tailwind.css";
 
 :root {
-  --utama: #C2410C;
-  --utama-gelap: #9A3412;
-  --utama-muda: #FFEDD5;
-  --latar: #FFF8F1;
+  --utama: #4D642D;
+  --utama-gelap: #36491C;
+  --utama-muda: #E8EFE0;
+  --latar: #FCF9F2;
   --kartu: #FFFFFF;
-  --garis: #EADFD4;
-  --teks: #1F1A17;
-  --teks-2: #6B5E55;
+  --garis: #E0E2D8;
+  --teks: #1C2311;
+  --teks-2: #5F6B4F;
   --bahaya: #DC2626;
   --bahaya-muda: #FEE2E2;
   --berhasil: #15803D;
@@ -20,6 +20,22 @@
   --kuning: #A16207;
   --kuning-muda: #FEF3C7;
   --r: 10px;
+}
+
+/* Custom Scrollbar Premium */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #D7DFC9;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--utama);
 }
 
 body {
@@ -145,7 +161,7 @@ h1, h2, h3, h4, .font-heading {
 .alur-node {
   padding: 3px 8px;
   border-radius: 999px;
-  background-color: #F2EAE3;
+  background-color: #D7DFC9;
   color: var(--teks-2);
   font-weight: 500;
 }

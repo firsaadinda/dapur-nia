@@ -179,11 +179,11 @@ export function UjiTembusModal({ open, onOpenChange }: { open: boolean; onOpenCh
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto bg-white border-[#E0E2D8] rounded-2xl">
         <DialogHeader>
           <div className="flex items-center gap-2">
             <ShieldAlert className="h-5 w-5 text-amber-600" />
-            <DialogTitle>Uji Tembus 6 Masukan Tidak Sah</DialogTitle>
+            <DialogTitle>Uji Validasi 6 Masukan Tidak Sah</DialogTitle>
           </div>
           <DialogDescription>
             Pengujian otomatis acceptance criteria & penegakan 3 invariant sesuai PRD Bagian 8.
@@ -206,7 +206,7 @@ export function UjiTembusModal({ open, onOpenChange }: { open: boolean; onOpenCh
               className="bg-amber-600 hover:bg-amber-700 text-white gap-1 text-xs h-8"
             >
               <Play className="h-3.5 w-3.5" />
-              {running ? 'Menguji...' : 'Jalankan Semua Uji Tembus'}
+              {running ? 'Menguji...' : 'Jalankan Semua Uji Validasi'}
             </Button>
           </div>
 
@@ -244,7 +244,7 @@ export function UjiTembusModal({ open, onOpenChange }: { open: boolean; onOpenCh
 
                 {test.pesanPenolakan && (
                   <p className="text-amber-800 bg-amber-50/80 p-1.5 rounded border border-amber-200 text-[11px] font-mono">
-                    🛡️ Respon Guard: {test.pesanPenolakan}
+                    Sistem Penolakan: {test.pesanPenolakan}
                   </p>
                 )}
 

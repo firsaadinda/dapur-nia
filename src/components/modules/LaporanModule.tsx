@@ -35,26 +35,26 @@ export function LaporanModule() {
   return (
     <div className="space-y-4">
       {/* Top action bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-[#EADFD4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/70 backdrop-blur-md p-4 rounded-xl border border-white/60 shadow-sm">
         <div>
-          <h2 className="text-xl font-bold font-heading text-[#1F1A17] tracking-tight">
+          <h2 className="text-xl font-bold font-heading text-[#36491C] tracking-tight">
             Laporan Harian
           </h2>
-          <p className="text-xs text-[#6B5E55]">
+          <p className="text-xs text-[#5F6B4F]">
             Ringkasan omzet dan porsi terjual (pesanan dibatalkan tidak dihitung).
           </p>
         </div>
 
         {/* Date Selector */}
-        <div className="flex items-center gap-2 bg-[#FFF8F1] border border-[#EADFD4] px-3 py-1.5 rounded-lg">
-          <Calendar className="h-4 w-4 text-[#C2410C] shrink-0" />
-          <Label htmlFor="date-input" className="text-xs font-bold text-[#1F1A17] shrink-0">
+        <div className="flex items-center gap-2 bg-[#FCF9F2] border border-[#E0E2D8] px-3 py-1.5 rounded-lg">
+          <Calendar className="h-4 w-4 text-[#4D642D] shrink-0" />
+          <Label htmlFor="date-input" className="text-xs font-bold text-[#1C2311] shrink-0">
             Tanggal:
           </Label>
           <Input
             id="date-input"
             type="date"
-            className="h-8 text-xs bg-white border-[#EADFD4] w-36 font-mono"
+            className="h-8 text-xs bg-white border-[#E0E2D8] w-36 font-mono"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
           />
@@ -64,8 +64,8 @@ export function LaporanModule() {
       {/* Loading state */}
       {loading && (
         <div className="grid grid-cols-2 gap-3">
-          <Card className="animate-pulse p-6 bg-white border-[#EADFD4] rounded-xl h-28"></Card>
-          <Card className="animate-pulse p-6 bg-white border-[#EADFD4] rounded-xl h-28"></Card>
+          <Card className="animate-pulse p-6 bg-white border-[#E0E2D8] rounded-xl h-28"></Card>
+          <Card className="animate-pulse p-6 bg-white border-[#E0E2D8] rounded-xl h-28"></Card>
         </div>
       )}
 
@@ -91,14 +91,14 @@ export function LaporanModule() {
 
       {/* Empty state */}
       {!loading && !error && laporan && laporan.total_porsi === 0 && (
-        <div className="bg-white border border-dashed border-[#EADFD4] rounded-xl p-10 text-center space-y-2">
-          <div className="w-12 h-12 rounded-full bg-[#FFEDD5] text-[#C2410C] mx-auto flex items-center justify-center font-bold text-lg">
+        <div className="bg-white border border-dashed border-[#E0E2D8] rounded-xl p-10 text-center space-y-2">
+          <div className="w-12 h-12 rounded-full bg-[#E8EFE0] text-[#4D642D] mx-auto flex items-center justify-center font-bold text-lg">
             !
           </div>
-          <h3 className="font-heading font-bold text-base text-[#1F1A17]">
+          <h3 className="font-heading font-bold text-base text-[#1C2311]">
             Belum Ada Penjualan Pada Tanggal Ini
           </h3>
-          <p className="text-xs text-[#6B5E55] max-w-sm mx-auto">
+          <p className="text-xs text-[#5F6B4F] max-w-sm mx-auto">
             Tidak ada pesanan aktif tercatat pada <strong>{selectedDate}</strong>.
           </p>
         </div>
@@ -109,25 +109,25 @@ export function LaporanModule() {
         <div className="space-y-4">
           {/* Summary KPI Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Card className="bg-white border border-[#EADFD4] rounded-xl p-5 shadow-xs">
-              <div className="flex items-center justify-between text-[#6B5E55]">
+            <Card className="bg-white/85 backdrop-blur-md border border-[#C2410C] rounded-2xl p-5 shadow-none outline-none ring-0">
+              <div className="flex items-center justify-between text-[#5F6B4F]">
                 <span className="text-xs font-bold uppercase tracking-wider">
                   Total Uang Masuk
                 </span>
-                <div className="w-8 h-8 rounded-lg bg-[#FFEDD5] text-[#C2410C] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[#E8EFE0] text-[#4D642D] flex items-center justify-center">
                   <DollarSign className="h-4 w-4" />
                 </div>
               </div>
-              <div className="text-2xl sm:text-3xl font-bold font-heading text-[#C2410C] mt-2 tracking-tight">
+              <div className="text-2xl sm:text-3xl font-bold font-heading text-[#4D642D] mt-2 tracking-tight">
                 Rp {laporan.total_uang_masuk.toLocaleString('id-ID')}
               </div>
-              <div className="text-[11px] text-[#6B5E55] mt-1">
+              <div className="text-[11px] text-[#5F6B4F] mt-1">
                 Termasuk subtotal menu & ongkir
               </div>
             </Card>
 
-            <Card className="bg-white border border-[#EADFD4] rounded-xl p-5 shadow-xs">
-              <div className="flex items-center justify-between text-[#6B5E55]">
+            <Card className="bg-white/85 backdrop-blur-md border border-[#C2410C] rounded-2xl p-5 shadow-none outline-none ring-0">
+              <div className="flex items-center justify-between text-[#5F6B4F]">
                 <span className="text-xs font-bold uppercase tracking-wider">
                   Porsi Terjual
                 </span>
@@ -138,35 +138,35 @@ export function LaporanModule() {
               <div className="text-2xl sm:text-3xl font-bold font-heading text-[#15803D] mt-2 tracking-tight">
                 {laporan.total_porsi} <span className="text-base font-normal">porsi</span>
               </div>
-              <div className="text-[11px] text-[#6B5E55] mt-1">
+              <div className="text-[11px] text-[#5F6B4F] mt-1">
                 Dari {laporan.daftar_pesanan.length} pesanan sah
               </div>
             </Card>
           </div>
 
           {/* Breakdown per Menu */}
-          <Card className="bg-white border border-[#EADFD4] rounded-xl shadow-xs overflow-hidden">
-            <CardHeader className="p-4 border-b border-[#EADFD4]">
-              <CardTitle className="text-sm font-bold font-heading text-[#1F1A17] flex items-center gap-1.5">
-                <FileSpreadsheet className="h-4 w-4 text-[#C2410C]" />
+          <Card className="bg-white/85 backdrop-blur-md border border-[#C2410C] rounded-2xl shadow-none outline-none ring-0 overflow-hidden">
+            <CardHeader className="p-4 border-b border-[#C2410C]/30">
+              <CardTitle className="text-sm font-bold font-heading text-[#C2410C] flex items-center gap-1.5">
+                <FileSpreadsheet className="h-4 w-4 text-[#4D642D]" />
                 Porsi Terjual per Menu
               </CardTitle>
             </CardHeader>
 
             <CardContent className="p-0">
-              <div className="divide-y divide-[#EADFD4]">
+              <div className="divide-y divide-[#E0E2D8]">
                 {laporan.rincian_menu.map((item) => (
                   <div
                     key={item.menu_id}
-                    className="p-4 flex items-center justify-between hover:bg-[#FFF8F1]/60 transition-colors"
+                    className="p-4 flex items-center justify-between hover:bg-[#FCF9F2]/60 transition-colors"
                   >
                     <div>
-                      <p className="text-sm font-bold text-[#1F1A17]">{item.nama_menu}</p>
-                      <p className="text-xs text-[#6B5E55]">
+                      <p className="text-sm font-bold text-[#1C2311]">{item.nama_menu}</p>
+                      <p className="text-xs text-[#5F6B4F]">
                         Omzet: Rp{item.total_omzet.toLocaleString('id-ID')}
                       </p>
                     </div>
-                    <span className="text-xs font-bold text-[#C2410C] bg-[#FFEDD5] border border-[#FED7AA] px-3 py-1 rounded-full">
+                    <span className="text-xs font-bold text-[#4D642D] bg-[#E8EFE0] border border-[#FED7AA] px-3 py-1 rounded-full">
                       {item.porsi_terjual} porsi
                     </span>
                   </div>

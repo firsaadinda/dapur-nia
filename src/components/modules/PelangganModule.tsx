@@ -99,18 +99,18 @@ export function PelangganModule({ onPelangganChanged }: { onPelangganChanged?: (
   return (
     <div className="space-y-4">
       {/* Top action bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-[#EADFD4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/70 backdrop-blur-md p-4 rounded-xl border border-white/60 shadow-sm">
         <div>
-          <h2 className="text-xl font-bold font-heading text-[#1F1A17] tracking-tight">
+          <h2 className="text-xl font-bold font-heading text-[#36491C] tracking-tight">
             Data Pelanggan
           </h2>
-          <p className="text-xs text-[#6B5E55]">
+          <p className="text-xs text-[#5F6B4F]">
             Terdaftar: <strong>{list.length}</strong> kontak pelanggan
           </p>
         </div>
         <Button
           onClick={openAddDialog}
-          className="bg-[#C2410C] hover:bg-[#9A3412] text-white font-semibold text-xs h-9 px-4 gap-1.5 shadow-sm rounded-lg"
+          className="bg-[#4D642D] hover:bg-[#36491C] text-white font-semibold text-xs h-9 px-4 gap-1.5 shadow-sm rounded-lg"
         >
           <UserPlus className="h-4 w-4" />
           Tambah Pelanggan
@@ -119,10 +119,10 @@ export function PelangganModule({ onPelangganChanged }: { onPelangganChanged?: (
 
       {/* Search Input Bar */}
       <div className="relative">
-        <Search className="absolute left-3.5 top-3 h-4 w-4 text-[#6B5E55]" />
+        <Search className="absolute left-3.5 top-3 h-4 w-4 text-[#5F6B4F]" />
         <Input
           placeholder="Cari nama atau nomor WhatsApp..."
-          className="pl-10 h-10 bg-white border-[#EADFD4] text-xs rounded-xl focus:border-[#C2410C]"
+          className="pl-10 h-10 bg-white border-[#E0E2D8] text-xs rounded-xl focus:border-[#4D642D]"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -132,10 +132,10 @@ export function PelangganModule({ onPelangganChanged }: { onPelangganChanged?: (
       {loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {[1, 2].map((i) => (
-            <Card key={i} className="animate-pulse p-4 bg-white border-[#EADFD4] rounded-xl">
-              <div className="h-4 bg-[#F2EAE3] rounded w-1/2 mb-2"></div>
-              <div className="h-3 bg-[#F2EAE3] rounded w-3/4 mb-4"></div>
-              <div className="h-6 bg-[#F2EAE3] rounded w-1/3"></div>
+            <Card key={i} className="animate-pulse p-4 bg-white border-[#E0E2D8] rounded-xl">
+              <div className="h-4 bg-[#D7DFC9] rounded w-1/2 mb-2"></div>
+              <div className="h-3 bg-[#D7DFC9] rounded w-3/4 mb-4"></div>
+              <div className="h-6 bg-[#D7DFC9] rounded w-1/3"></div>
             </Card>
           ))}
         </div>
@@ -163,14 +163,14 @@ export function PelangganModule({ onPelangganChanged }: { onPelangganChanged?: (
 
       {/* Empty state */}
       {!loading && !error && filteredList.length === 0 && (
-        <div className="bg-white border border-dashed border-[#EADFD4] rounded-xl p-10 text-center space-y-2">
-          <div className="w-12 h-12 rounded-full bg-[#FFEDD5] text-[#C2410C] mx-auto flex items-center justify-center font-bold text-lg">
+        <div className="bg-white border border-dashed border-[#E0E2D8] rounded-xl p-10 text-center space-y-2">
+          <div className="w-12 h-12 rounded-full bg-[#E8EFE0] text-[#4D642D] mx-auto flex items-center justify-center font-bold text-lg">
             !
           </div>
-          <h3 className="font-heading font-bold text-base text-[#1F1A17]">
+          <h3 className="font-heading font-bold text-base text-[#1C2311]">
             {searchQuery ? 'Pelanggan Tidak Ditemukan' : 'Belum Ada Pelanggan'}
           </h3>
-          <p className="text-xs text-[#6B5E55] max-w-sm mx-auto">
+          <p className="text-xs text-[#5F6B4F] max-w-sm mx-auto">
             {searchQuery
               ? `Tidak ada data yang cocok dengan "${searchQuery}".`
               : 'Daftarkan kontak pelanggan pertama untuk mulai membuat pesanan katering.'}
@@ -184,17 +184,17 @@ export function PelangganModule({ onPelangganChanged }: { onPelangganChanged?: (
           {filteredList.map((c) => (
             <Card
               key={c.id}
-              className="bg-white border border-[#EADFD4] rounded-xl shadow-xs hover:border-[#C2410C] transition-all flex flex-col justify-between"
+              className="bg-white/85 backdrop-blur-md border border-[#C2410C] rounded-2xl shadow-none outline-none ring-0 hover:shadow-none hover:border-[#9A3412] transition-all flex flex-col justify-between"
             >
               <div>
                 <CardHeader className="p-4 pb-2">
                   <div className="flex items-start justify-between">
                     <div>
-                      <CardTitle className="text-base font-bold font-heading text-[#1F1A17]">
+                      <CardTitle className="text-base font-bold font-heading text-[#36491C]">
                         {c.nama}
                       </CardTitle>
-                      <CardDescription className="text-xs flex items-center gap-1 text-[#6B5E55] font-mono mt-0.5">
-                        <Phone className="h-3 w-3 text-[#C2410C]" />
+                      <CardDescription className="text-xs flex items-center gap-1 text-[#5F6B4F] font-mono mt-0.5">
+                        <Phone className="h-3 w-3 text-[#4D642D]" />
                         {c.no_whatsapp}
                       </CardDescription>
                     </div>
@@ -212,14 +212,14 @@ export function PelangganModule({ onPelangganChanged }: { onPelangganChanged?: (
                 </CardHeader>
 
                 <CardContent className="px-4 pb-3 text-xs">
-                  <div className="flex items-start gap-1.5 text-[#6B5E55] bg-[#FFF8F1] p-2.5 rounded-lg border border-[#EADFD4]">
-                    <MapPin className="h-3.5 w-3.5 text-[#C2410C] shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-1.5 text-[#5F6B4F] bg-[#FCF9F2] p-2.5 rounded-lg border border-[#E0E2D8]">
+                    <MapPin className="h-3.5 w-3.5 text-[#4D642D] shrink-0 mt-0.5" />
                     <span className="leading-snug">{c.alamat}</span>
                   </div>
                 </CardContent>
               </div>
 
-              <CardFooter className="px-4 py-2 bg-[#FFF8F1]/40 border-t border-[#EADFD4] flex justify-end rounded-b-xl">
+              <CardFooter className="px-4 py-2 bg-[#FCF9F2]/40 border-t border-[#E0E2D8] flex justify-end rounded-b-xl">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -237,19 +237,19 @@ export function PelangganModule({ onPelangganChanged }: { onPelangganChanged?: (
 
       {/* Modal Dialog Form Tambah Pelanggan */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-md bg-white border-[#EADFD4] rounded-2xl">
+        <DialogContent className="sm:max-w-md bg-white border-[#E0E2D8] rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="font-heading text-lg font-bold text-[#1F1A17]">
+            <DialogTitle className="font-heading text-lg font-bold text-[#1C2311]">
               Tambah Pelanggan
             </DialogTitle>
-            <DialogDescription className="text-xs text-[#6B5E55]">
+            <DialogDescription className="text-xs text-[#5F6B4F]">
               Nomor WhatsApp digunakan sebagai kunci unik pelanggan.
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleSave} className="space-y-3 py-1">
             <div className="space-y-1">
-              <Label htmlFor="nama-p" className="text-xs font-bold text-[#1F1A17]">
+              <Label htmlFor="nama-p" className="text-xs font-bold text-[#1C2311]">
                 Nama Lengkap
               </Label>
               <Input
@@ -257,14 +257,14 @@ export function PelangganModule({ onPelangganChanged }: { onPelangganChanged?: (
                 placeholder="Contoh: Ibu Rina Amalia"
                 value={nama}
                 maxLength={60}
-                className="h-10 border-[#EADFD4]"
+                className="h-10 border-[#E0E2D8]"
                 onChange={(e) => setNama(e.target.value)}
                 required
               />
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="wa-p" className="text-xs font-bold text-[#1F1A17]">
+              <Label htmlFor="wa-p" className="text-xs font-bold text-[#1C2311]">
                 Nomor WhatsApp
               </Label>
               <Input
@@ -273,17 +273,17 @@ export function PelangganModule({ onPelangganChanged }: { onPelangganChanged?: (
                 placeholder="081234567890"
                 value={noWhatsapp}
                 maxLength={13}
-                className="h-10 border-[#EADFD4]"
+                className="h-10 border-[#E0E2D8]"
                 onChange={(e) => setNoWhatsapp(e.target.value.replace(/\D/g, ''))}
                 required
               />
-              <p className="text-[11px] text-[#6B5E55]">
+              <p className="text-[11px] text-[#5F6B4F]">
                 Awali dengan 08, panjang 10 sampai 13 angka.
               </p>
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="alamat-p" className="text-xs font-bold text-[#1F1A17]">
+              <Label htmlFor="alamat-p" className="text-xs font-bold text-[#1C2311]">
                 Alamat Pengiriman
               </Label>
               <Textarea
@@ -292,7 +292,7 @@ export function PelangganModule({ onPelangganChanged }: { onPelangganChanged?: (
                 value={alamat}
                 maxLength={200}
                 rows={3}
-                className="border-[#EADFD4]"
+                className="border-[#E0E2D8]"
                 onChange={(e) => setAlamat(e.target.value)}
                 required
               />
@@ -302,7 +302,7 @@ export function PelangganModule({ onPelangganChanged }: { onPelangganChanged?: (
               <Button
                 type="button"
                 variant="outline"
-                className="border-[#EADFD4] text-[#1F1A17] flex-1"
+                className="border-[#E0E2D8] text-[#1C2311] flex-1"
                 onClick={() => setDialogOpen(false)}
                 disabled={saving}
               >
@@ -310,7 +310,7 @@ export function PelangganModule({ onPelangganChanged }: { onPelangganChanged?: (
               </Button>
               <Button
                 type="submit"
-                className="bg-[#C2410C] hover:bg-[#9A3412] text-white font-bold flex-1"
+                className="bg-[#4D642D] hover:bg-[#36491C] text-white font-bold flex-1"
                 disabled={saving}
               >
                 {saving ? 'Menyimpan...' : 'Simpan Pelanggan'}

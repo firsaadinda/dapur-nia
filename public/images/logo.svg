@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="gradOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F4BA20" />
+      <stop offset="100%" stop-color="#EF4D21" />
+    </linearGradient>
+    <linearGradient id="gradGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5F6B4F" />
+      <stop offset="100%" stop-color="#4D642D" />
+    </linearGradient>
+  </defs>
+
+  <!-- Left abstract leaf/swoosh -->
+  <path d="M 150 250 C 40 250 40 100 40 100 C 40 100 80 180 150 200 Z" fill="url(#gradGreen)" opacity="0.2"/>
+  
+  <!-- Right abstract leaf/swoosh -->
+  <path d="M 150 250 C 260 250 260 100 260 100 C 260 100 220 180 150 200 Z" fill="url(#gradOrange)" opacity="0.2"/>
+
+  <!-- Spoon -->
+  <path d="M 110 80 C 85 80 75 110 75 140 C 75 170 85 190 110 190 C 135 190 145 170 145 140 C 145 110 135 80 110 80 Z M 105 190 L 105 260 A 5 5 0 0 0 115 260 L 115 190 Z" fill="url(#gradOrange)" />
+
+  <!-- Fork -->
+  <path d="M 160 80 A 6 6 0 0 1 172 80 L 172 140 A 6 6 0 0 1 160 140 Z" fill="url(#gradGreen)" />
+  <path d="M 184 80 A 6 6 0 0 1 196 80 L 196 140 A 6 6 0 0 1 184 140 Z" fill="url(#gradGreen)" />
+  <path d="M 208 80 A 6 6 0 0 1 220 80 L 220 140 A 6 6 0 0 1 208 140 Z" fill="url(#gradGreen)" />
+  <path d="M 166 140 C 166 170 214 170 214 140" fill="none" stroke="url(#gradGreen)" stroke-width="12" stroke-linecap="round" />
+  <path d="M 184 158 L 184 260 A 6 6 0 0 0 196 260 L 196 158 Z" fill="url(#gradGreen)" />
+
+</svg>

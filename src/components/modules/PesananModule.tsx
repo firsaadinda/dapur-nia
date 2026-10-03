@@ -16,9 +16,9 @@ const ALUR_STEPS: OrderStatus[] = ['menunggu_bayar', 'dibayar', 'diproses', 'sel
 const STATUS_MAP: Record<OrderStatus, { label: string; pillClass: string }> = {
   menunggu_bayar: { label: 'Menunggu Bayar', pillClass: 'bg-[#FEF3C7] text-[#A16207] border border-[#FDE68A]' },
   dibayar: { label: 'Sudah Dibayar', pillClass: 'bg-[#DBEAFE] text-[#1D4ED8] border border-[#BFDBFE]' },
-  diproses: { label: 'Sedang Diproses', pillClass: 'bg-[#FFEDD5] text-[#9A3412] border border-[#FED7AA]' },
+  diproses: { label: 'Sedang Diproses', pillClass: 'bg-[#E8EFE0] text-[#36491C] border border-[#FED7AA]' },
   selesai: { label: 'Selesai', pillClass: 'bg-[#DCFCE7] text-[#15803D] border border-[#BBF7D0]' },
-  dibatalkan: { label: 'Dibatalkan', pillClass: 'bg-[#EEE7E1] text-[#6B5E55] border border-[#E0D7D0]' },
+  dibatalkan: { label: 'Dibatalkan', pillClass: 'bg-[#EEE7E1] text-[#5F6B4F] border border-[#E0D7D0]' },
 };
 
 export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void }) {
@@ -149,18 +149,18 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
   return (
     <div className="space-y-4">
       {/* Top action bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-[#EADFD4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/70 backdrop-blur-md p-4 rounded-xl border border-white/60 shadow-sm">
         <div>
-          <h2 className="text-xl font-bold font-heading text-[#1F1A17] tracking-tight">
+          <h2 className="text-xl font-bold font-heading text-[#36491C] tracking-tight">
             Pesanan Katering
           </h2>
-          <p className="text-xs text-[#6B5E55]">
+          <p className="text-xs text-[#5F6B4F]">
             Total pesanan: <strong>{orders.length}</strong> pesanan
           </p>
         </div>
         <Button
           onClick={openCreateDialog}
-          className="bg-[#C2410C] hover:bg-[#9A3412] text-white font-semibold text-xs h-9 px-4 gap-1.5 shadow-sm rounded-lg"
+          className="bg-[#4D642D] hover:bg-[#36491C] text-white font-semibold text-xs h-9 px-4 gap-1.5 shadow-sm rounded-lg"
         >
           <Plus className="h-4 w-4" />
           Pesanan Baru
@@ -184,8 +184,8 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
               onClick={() => setFilterStatus(chip.id)}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all border ${
                 active
-                  ? 'bg-[#C2410C] text-white border-[#C2410C] shadow-xs'
-                  : 'bg-white text-[#6B5E55] border-[#EADFD4] hover:border-[#C2410C] hover:text-[#C2410C]'
+                  ? 'bg-[#4D642D] text-white border-[#4D642D] shadow-xs'
+                  : 'bg-white text-[#5F6B4F] border-[#E0E2D8] hover:border-[#4D642D] hover:text-[#4D642D]'
               }`}
             >
               {chip.label}
@@ -198,10 +198,10 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
       {loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {[1, 2].map((i) => (
-            <Card key={i} className="animate-pulse p-5 bg-white border-[#EADFD4] rounded-xl">
-              <div className="h-4 bg-[#F2EAE3] rounded w-1/3 mb-2"></div>
-              <div className="h-3 bg-[#F2EAE3] rounded w-1/2 mb-4"></div>
-              <div className="h-10 bg-[#F2EAE3] rounded w-full"></div>
+            <Card key={i} className="animate-pulse p-5 bg-white border-[#E0E2D8] rounded-xl">
+              <div className="h-4 bg-[#D7DFC9] rounded w-1/3 mb-2"></div>
+              <div className="h-3 bg-[#D7DFC9] rounded w-1/2 mb-4"></div>
+              <div className="h-10 bg-[#D7DFC9] rounded w-full"></div>
             </Card>
           ))}
         </div>
@@ -229,14 +229,14 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
 
       {/* Empty state */}
       {!loading && !error && filteredOrders.length === 0 && (
-        <div className="bg-white border border-dashed border-[#EADFD4] rounded-xl p-10 text-center space-y-2">
-          <div className="w-12 h-12 rounded-full bg-[#FFEDD5] text-[#C2410C] mx-auto flex items-center justify-center font-bold text-lg">
+        <div className="bg-white border border-dashed border-[#E0E2D8] rounded-xl p-10 text-center space-y-2">
+          <div className="w-12 h-12 rounded-full bg-[#E8EFE0] text-[#4D642D] mx-auto flex items-center justify-center font-bold text-lg">
             !
           </div>
-          <h3 className="font-heading font-bold text-base text-[#1F1A17]">
+          <h3 className="font-heading font-bold text-base text-[#1C2311]">
             Tidak Ada Pesanan
           </h3>
-          <p className="text-xs text-[#6B5E55] max-w-sm mx-auto">
+          <p className="text-xs text-[#5F6B4F] max-w-sm mx-auto">
             {filterStatus === 'semua'
               ? 'Belum ada pesanan aktif. Tekan tombol Pesanan Baru untuk membuat transaksi.'
               : `Tidak ada pesanan dengan status "${STATUS_MAP[filterStatus as OrderStatus]?.label || filterStatus}".`}
@@ -257,19 +257,19 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
             return (
               <Card
                 key={o.id}
-                className="bg-white border border-[#EADFD4] rounded-xl shadow-xs hover:border-[#C2410C] transition-all flex flex-col justify-between"
+                className="bg-white/85 backdrop-blur-md border border-[#C2410C] rounded-2xl shadow-none outline-none ring-0 hover:shadow-none hover:border-[#9A3412] transition-all flex flex-col justify-between"
               >
                 <div>
                   <CardHeader className="p-4 pb-2">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <span className="text-[11px] font-mono font-bold text-[#6B5E55]">
+                        <span className="text-[11px] font-mono font-bold text-[#5F6B4F]">
                           #{o.id.slice(-6)}
                         </span>
-                        <CardTitle className="text-base font-bold font-heading text-[#1F1A17] mt-0.5">
+                        <CardTitle className="text-base font-bold font-heading text-[#36491C] mt-0.5">
                           {o.nama_pelanggan}
                         </CardTitle>
-                        <div className="text-[11px] text-[#6B5E55] flex items-center gap-2 mt-0.5">
+                        <div className="text-[11px] text-[#5F6B4F] flex items-center gap-2 mt-0.5">
                           <span className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
                             {o.tanggal}
@@ -289,31 +289,31 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
 
                   <CardContent className="px-4 pb-3 space-y-2 text-xs">
                     {/* Alamat & Catatan */}
-                    <div className="bg-[#FFF8F1] p-2.5 rounded-lg border border-[#EADFD4] flex flex-col gap-1">
-                      <div className="flex items-start gap-1.5 text-[#6B5E55] text-[11px]">
-                        <MapPin className="h-3.5 w-3.5 text-[#C2410C] shrink-0 mt-0.5" />
+                    <div className="bg-[#FCF9F2] p-2.5 rounded-lg border border-[#E0E2D8] flex flex-col gap-1">
+                      <div className="flex items-start gap-1.5 text-[#5F6B4F] text-[11px]">
+                        <MapPin className="h-3.5 w-3.5 text-[#4D642D] shrink-0 mt-0.5" />
                         <span className="leading-snug">{o.alamat_kirim}</span>
                       </div>
                       {o.bukti_bayar && (
-                        <div className="text-[11px] text-[#6B5E55] pt-1 border-t border-[#EADFD4]/60">
+                        <div className="text-[11px] text-[#5F6B4F] pt-1 border-t border-[#E0E2D8]/60">
                           <strong>Catatan Bayar:</strong> {o.bukti_bayar}
                         </div>
                       )}
                     </div>
 
                     {/* Menu and Price Calculation */}
-                    <div className="bg-white border border-[#EADFD4] rounded-lg p-2.5 space-y-1">
-                      <div className="flex justify-between font-semibold text-[#1F1A17]">
+                    <div className="bg-white border border-[#E0E2D8] rounded-lg p-2.5 space-y-1">
+                      <div className="flex justify-between font-semibold text-[#1C2311]">
                         <span>{o.nama_menu}</span>
                         <span>
                           {o.jumlah_porsi} × Rp{o.harga_satuan.toLocaleString('id-ID')}
                         </span>
                       </div>
-                      <div className="flex justify-between text-[#6B5E55] text-[11px]">
+                      <div className="flex justify-between text-[#5F6B4F] text-[11px]">
                         <span>Ongkos kirim</span>
                         <span>Rp{o.ongkir.toLocaleString('id-ID')}</span>
                       </div>
-                      <div className="flex justify-between font-bold text-sm text-[#C2410C] pt-1 border-t border-[#EADFD4] border-dashed">
+                      <div className="flex justify-between font-bold text-sm text-[#4D642D] pt-1 border-t border-[#E0E2D8] border-dashed">
                         <span>Total Tagihan</span>
                         <span>Rp{o.total.toLocaleString('id-ID')}</span>
                       </div>
@@ -321,7 +321,7 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
 
                     {/* Alur Status Stepper */}
                     <div className="pt-1">
-                      <div className="text-[10px] font-bold text-[#6B5E55] uppercase tracking-wider mb-1">
+                      <div className="text-[10px] font-bold text-[#5F6B4F] uppercase tracking-wider mb-1">
                         Alur Status
                       </div>
                       {o.status === 'dibatalkan' ? (
@@ -343,7 +343,7 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
                                   {STATUS_MAP[step].label}
                                 </span>
                                 {idx < ALUR_STEPS.length - 1 && (
-                                  <ChevronRight className="h-3 w-3 text-[#6B5E55]/60" />
+                                  <ChevronRight className="h-3 w-3 text-[#5F6B4F]/60" />
                                 )}
                               </div>
                             );
@@ -355,7 +355,7 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
                 </div>
 
                 {/* Footer Transition Buttons */}
-                <CardFooter className="px-4 py-3 bg-[#FFF8F1]/50 border-t border-[#EADFD4] flex flex-wrap items-center justify-between gap-2 rounded-b-xl">
+                <CardFooter className="px-4 py-3 bg-[#FCF9F2]/50 border-t border-[#E0E2D8] flex flex-wrap items-center justify-between gap-2 rounded-b-xl">
                   {/* Status: Menunggu Bayar */}
                   {o.status === 'menunggu_bayar' && (
                     <div className="flex items-center gap-2 w-full justify-end">
@@ -390,7 +390,7 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
                       </Button>
                       <Button
                         size="sm"
-                        className="text-xs h-8 bg-[#C2410C] hover:bg-[#9A3412] text-white"
+                        className="text-xs h-8 bg-[#4D642D] hover:bg-[#36491C] text-white"
                         onClick={() => handleStatusChange(o.id, 'diproses')}
                       >
                         Mulai Masak
@@ -413,7 +413,7 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
 
                   {/* Status Terminal */}
                   {(o.status === 'selesai' || o.status === 'dibatalkan') && (
-                    <span className="text-xs text-[#6B5E55] italic w-full text-right">
+                    <span className="text-xs text-[#5F6B4F] italic w-full text-right">
                       Pesanan selesai ({o.status}). Status terkunci.
                     </span>
                   )}
@@ -426,12 +426,12 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
 
       {/* Modal Dialog Form Pesanan Baru */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-md bg-white border-[#EADFD4] rounded-2xl">
+        <DialogContent className="sm:max-w-md bg-white border-[#E0E2D8] rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="font-heading text-lg font-bold text-[#1F1A17]">
+            <DialogTitle className="font-heading text-lg font-bold text-[#1C2311]">
               Pesanan Baru
             </DialogTitle>
-            <DialogDescription className="text-xs text-[#6B5E55]">
+            <DialogDescription className="text-xs text-[#5F6B4F]">
               Total dihitung otomatis dan sisa porsi menu akan dipotong langsung.
             </DialogDescription>
           </DialogHeader>
@@ -439,12 +439,12 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
           <form onSubmit={handleCreateOrder} className="space-y-3 py-1">
             {/* Pelanggan */}
             <div className="space-y-1">
-              <Label htmlFor="cust-sel" className="text-xs font-bold text-[#1F1A17]">
+              <Label htmlFor="cust-sel" className="text-xs font-bold text-[#1C2311]">
                 Pelanggan
               </Label>
               <select
                 id="cust-sel"
-                className="w-full h-10 rounded-lg border border-[#EADFD4] bg-white px-3 text-sm focus:border-[#C2410C] outline-none"
+                className="w-full h-10 rounded-lg border border-[#E0E2D8] bg-white px-3 text-sm focus:border-[#4D642D] outline-none"
                 value={selectedCustomerId}
                 onChange={(e) => setSelectedCustomerId(e.target.value)}
                 required
@@ -459,12 +459,12 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
 
             {/* Menu */}
             <div className="space-y-1">
-              <Label htmlFor="menu-sel" className="text-xs font-bold text-[#1F1A17]">
+              <Label htmlFor="menu-sel" className="text-xs font-bold text-[#1C2311]">
                 Menu Katering
               </Label>
               <select
                 id="menu-sel"
-                className="w-full h-10 rounded-lg border border-[#EADFD4] bg-white px-3 text-sm focus:border-[#C2410C] outline-none"
+                className="w-full h-10 rounded-lg border border-[#E0E2D8] bg-white px-3 text-sm focus:border-[#4D642D] outline-none"
                 value={selectedMenuId}
                 onChange={(e) => setSelectedMenuId(e.target.value)}
                 required
@@ -479,7 +479,7 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
 
             {/* Jumlah Porsi Stepper */}
             <div className="space-y-1">
-              <Label className="text-xs font-bold text-[#1F1A17]">
+              <Label className="text-xs font-bold text-[#1C2311]">
                 Jumlah Porsi
               </Label>
               <div>
@@ -507,7 +507,7 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
                   </button>
                 </div>
                 {selectedMenu && (
-                  <span className="text-[11px] text-[#6B5E55] ml-2">
+                  <span className="text-[11px] text-[#5F6B4F] ml-2">
                     Tersedia {selectedMenu.sisa_porsi} porsi
                   </span>
                 )}
@@ -516,7 +516,7 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
 
             {/* Ongkos Kirim */}
             <div className="space-y-1">
-              <Label htmlFor="ongkir-input" className="text-xs font-bold text-[#1F1A17]">
+              <Label htmlFor="ongkir-input" className="text-xs font-bold text-[#1C2311]">
                 Ongkos Kirim (Rp)
               </Label>
               <Input
@@ -524,7 +524,7 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
                 type="number"
                 min={0}
                 step={1000}
-                className="h-10 border-[#EADFD4] bg-white"
+                className="h-10 border-[#E0E2D8] bg-white"
                 value={ongkir}
                 onChange={(e) => setOngkir(e.target.value === '' ? 0 : Number(e.target.value))}
                 required
@@ -539,7 +539,7 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
                 </span>
                 <span>Rp{subtotal.toLocaleString('id-ID')}</span>
               </div>
-              <div className="flex justify-between text-[#6B5E55]">
+              <div className="flex justify-between text-[#5F6B4F]">
                 <span>Ongkos kirim</span>
                 <span>Rp{ongkir.toLocaleString('id-ID')}</span>
               </div>
@@ -553,7 +553,7 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
               <Button
                 type="button"
                 variant="outline"
-                className="border-[#EADFD4] text-[#1F1A17] flex-1"
+                className="border-[#E0E2D8] text-[#1C2311] flex-1"
                 onClick={() => setDialogOpen(false)}
                 disabled={saving}
               >
@@ -561,7 +561,7 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
               </Button>
               <Button
                 type="submit"
-                className="bg-[#C2410C] hover:bg-[#9A3412] text-white font-bold flex-1"
+                className="bg-[#4D642D] hover:bg-[#36491C] text-white font-bold flex-1"
                 disabled={saving || !selectedMenu || selectedMenu.sisa_porsi <= 0}
               >
                 {saving ? 'Menyimpan...' : 'Simpan Pesanan'}
