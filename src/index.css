@@ -1,0 +1,163 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+:root {
+  --utama: #C2410C;
+  --utama-gelap: #9A3412;
+  --utama-muda: #FFEDD5;
+  --latar: #FFF8F1;
+  --kartu: #FFFFFF;
+  --garis: #EADFD4;
+  --teks: #1F1A17;
+  --teks-2: #6B5E55;
+  --bahaya: #DC2626;
+  --bahaya-muda: #FEE2E2;
+  --berhasil: #15803D;
+  --berhasil-muda: #DCFCE7;
+  --info: #1D4ED8;
+  --info-muda: #DBEAFE;
+  --kuning: #A16207;
+  --kuning-muda: #FEF3C7;
+  --r: 10px;
+}
+
+body {
+  margin: 0;
+  background-color: var(--latar);
+  color: var(--teks);
+  font-family: Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Custom Dapur Nia Components & Tokens */
+.bg-latar {
+  background-color: var(--latar);
+}
+
+.text-utama {
+  color: var(--utama);
+}
+
+.bg-utama {
+  background-color: var(--utama);
+}
+
+.bg-utama:hover {
+  background-color: var(--utama-gelap);
+}
+
+.border-garis {
+  border-color: var(--garis);
+}
+
+/* Chips Filter */
+.chips-container {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.chips-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Stepper for Qty */
+.stepper-box {
+  display: inline-flex;
+  align-items: center;
+  border: 1.5px solid var(--garis);
+  border-radius: var(--r);
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.stepper-btn {
+  width: 38px;
+  height: 38px;
+  border: none;
+  background-color: var(--latar);
+  font-size: 18px;
+  font-weight: bold;
+  display: grid;
+  place-items: center;
+  color: var(--teks);
+  transition: background-color 0.15s;
+}
+
+.stepper-btn:hover:not(:disabled) {
+  background-color: var(--utama-muda);
+  color: var(--utama-gelap);
+}
+
+.stepper-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.stepper-input {
+  width: 52px;
+  height: 38px;
+  border: none;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+}
+
+/* Hitung breakdown box */
+.hitung-box {
+  background-color: var(--latar);
+  border: 1px solid var(--garis);
+  border-radius: var(--r);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+}
+
+.hitung-box .total-row {
+  border-top: 1px dashed var(--garis);
+  padding-top: 8px;
+  margin-top: 4px;
+  font-weight: bold;
+  font-size: 15px;
+  color: var(--utama-gelap);
+}
+
+/* Alur status pipeline */
+.alur-stepper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 11px;
+}
+
+.alur-node {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background-color: #F2EAE3;
+  color: var(--teks-2);
+  font-weight: 500;
+}
+
+.alur-node.active {
+  background-color: var(--utama);
+  color: #fff;
+  font-weight: 700;
+}
+
+.alur-node.passed {
+  background-color: var(--utama-muda);
+  color: var(--utama-gelap);
+  font-weight: 600;
+}
