@@ -45,6 +45,53 @@ const SEED_PELANGGAN = [
   { id: '085611223344', nama: 'Andi Wijaya', no_whatsapp: '085611223344', alamat: 'Jl. Kenanga No. 7' },
 ];
 
+const today = new Date().toISOString().split('T')[0];
+
+const SEED_PESANAN = [
+  {
+    id: 'pes1',
+    pelanggan_id: '081234567890',
+    nama_pelanggan: 'Budi Santoso',
+    alamat_kirim: 'Jl. Melati No. 12, RT 03/RW 05',
+    menu_id: 'm1_ayam_bakar',
+    nama_menu: 'Nasi Ayam Bakar Madu',
+    harga_satuan: 25000,
+    jumlah_porsi: 2,
+    ongkir: 5000,
+    total: 55000,
+    status: 'dibayar',
+    tanggal: today
+  },
+  {
+    id: 'pes2',
+    pelanggan_id: '081398765432',
+    nama_pelanggan: 'Siti Aminah',
+    alamat_kirim: 'Perum Griya Asri Blok C2',
+    menu_id: 'm8_es_teh',
+    nama_menu: 'Es Teh Manis Melati Jumbo',
+    harga_satuan: 5000,
+    jumlah_porsi: 4,
+    ongkir: 0,
+    total: 20000,
+    status: 'selesai',
+    tanggal: today
+  },
+  {
+    id: 'pes3',
+    pelanggan_id: '085611223344',
+    nama_pelanggan: 'Andi Wijaya',
+    alamat_kirim: 'Jl. Kenanga No. 7',
+    menu_id: 'm5_cumi_cabe_ijo',
+    nama_menu: 'Nasi Cumi Cabai Hijau',
+    harga_satuan: 28000,
+    jumlah_porsi: 1,
+    ongkir: 10000,
+    total: 38000,
+    status: 'menunggu_bayar',
+    tanggal: today
+  }
+];
+
 async function seed() {
   console.log('--- SEEDING CLOUD FIRESTORE DAPUR NIA ---');
   const app = initializeApp(firebaseConfig);
@@ -72,6 +119,25 @@ async function seed() {
         dibuat_pada: serverTimestamp(),
       });
       console.log(`  + Pelanggan: ${p.nama} (${p.id})`);
+    }
+
+    console.log('Menyimpan pesanan ke koleksi "pesanan"...');
+    for (const p of SEED_PESANAN) {
+      await setDoc(doc(db, 'pesanan', p.id), {
+        pelanggan_id: p.pelanggan_id,
+        nama_pelanggan: p.nama_pelanggan,
+        alamat_kirim: p.alamat_kirim,
+        menu_id: p.menu_id,
+        nama_menu: p.nama_menu,
+        harga_satuan: p.harga_satuan,
+        jumlah_porsi: p.jumlah_porsi,
+        ongkir: p.ongkir,
+        total: p.total,
+        status: p.status,
+        tanggal: p.tanggal,
+        dibuat_pada: serverTimestamp(),
+      });
+      console.log(`  + Pesanan: ${p.nama_pelanggan} - ${p.nama_menu}`);
     }
 
     console.log('\n[SELESAI] Data awal berhasil diunggah ke Cloud Firestore!');
