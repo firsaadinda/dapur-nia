@@ -11,7 +11,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 
-const STORAGE_KEY = 'dapur_nia_pelanggan';
+const STORAGE_KEY = 'dapur_nia_pelanggan_v3';
 
 const INITIAL_PELANGGAN: Pelanggan[] = [
   {
@@ -22,10 +22,17 @@ const INITIAL_PELANGGAN: Pelanggan[] = [
     dibuat_pada: new Date().toISOString(),
   },
   {
-    id: '081987654321',
-    nama: 'Siti Rahma',
-    no_whatsapp: '081987654321',
-    alamat: 'Perum Graha Indah Blok C-4',
+    id: '081398765432',
+    nama: 'Siti Aminah',
+    no_whatsapp: '081398765432',
+    alamat: 'Perum Griya Asri Blok C2',
+    dibuat_pada: new Date().toISOString(),
+  },
+  {
+    id: '085611223344',
+    nama: 'Andi Wijaya',
+    no_whatsapp: '085611223344',
+    alamat: 'Jl. Kenanga No. 7',
     dibuat_pada: new Date().toISOString(),
   },
 ];

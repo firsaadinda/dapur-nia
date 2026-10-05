@@ -14,23 +14,57 @@ import {
   orderBy,
 } from 'firebase/firestore';
 
-const STORAGE_KEY = 'dapur_nia_pesanan';
+const STORAGE_KEY = 'dapur_nia_pesanan_v3';
+
+const todayStr = new Date().toISOString().split('T')[0];
 
 const INITIAL_PESANAN: Pesanan[] = [
   {
-    id: 'pesanan_demo_1',
+    id: 'pes1',
     pelanggan_id: '081234567890',
     nama_pelanggan: 'Budi Santoso',
     alamat_kirim: 'Jl. Melati No. 12, RT 03/RW 05',
-    menu_id: 'menu_ayam_bakar',
+    menu_id: 'm1_ayam_bakar',
     nama_menu: 'Nasi Ayam Bakar Madu',
     harga_satuan: 25000,
-    jumlah_porsi: 2,
+    jumlah_porsi: 20,
     ongkir: 5000,
-    total: 55000,
+    total: 505000,
     status: 'dibayar',
-    bukti_bayar: 'Transfer BCA an Budi Santoso',
-    tanggal: new Date().toISOString().split('T')[0],
+    bukti_bayar: 'qris_mandiri_budi.png',
+    tanggal: todayStr,
+    dibuat_pada: new Date().toISOString(),
+  },
+  {
+    id: 'pes2',
+    pelanggan_id: '081398765432',
+    nama_pelanggan: 'Siti Aminah',
+    alamat_kirim: 'Perum Griya Asri Blok C2',
+    menu_id: 'm8_es_teh',
+    nama_menu: 'Es Teh Manis Melati Jumbo',
+    harga_satuan: 5000,
+    jumlah_porsi: 12,
+    ongkir: 0,
+    total: 60000,
+    status: 'selesai',
+    bukti_bayar: 'qris_mandiri_siti.png',
+    tanggal: todayStr,
+    dibuat_pada: new Date().toISOString(),
+  },
+  {
+    id: 'pes3',
+    pelanggan_id: '085611223344',
+    nama_pelanggan: 'Andi Wijaya',
+    alamat_kirim: 'Jl. Kenanga No. 7',
+    menu_id: 'm5_cumi_cabe_ijo',
+    nama_menu: 'Nasi Cumi Cabai Hijau',
+    harga_satuan: 28000,
+    jumlah_porsi: 2,
+    ongkir: 14000,
+    total: 70000,
+    status: 'menunggu_bayar',
+    bukti_bayar: '',
+    tanggal: todayStr,
     dibuat_pada: new Date().toISOString(),
   },
 ];

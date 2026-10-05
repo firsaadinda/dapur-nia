@@ -9,13 +9,22 @@ const env: Record<string, string | undefined> =
 const clean = (val: string | undefined) =>
   (val || '').trim().replace(/^["']|["']$/g, '').replace(/,$/, '').trim();
 
+const DEFAULT_FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyDPG_lEw8a7WTi_bIt6VpTQsj2pJgqhSw0',
+  authDomain: 'bootcamp-future-maker-3a054.firebaseapp.com',
+  projectId: 'bootcamp-future-maker-3a054',
+  storageBucket: 'bootcamp-future-maker-3a054.firebasestorage.app',
+  messagingSenderId: '29788769543',
+  appId: '1:29788769543:web:586b1dc845c22fca79c9a2',
+};
+
 const firebaseConfig = {
-  apiKey: clean(env.VITE_FIREBASE_API_KEY),
-  authDomain: clean(env.VITE_FIREBASE_AUTH_DOMAIN),
-  projectId: clean(env.VITE_FIREBASE_PROJECT_ID),
-  storageBucket: clean(env.VITE_FIREBASE_STORAGE_BUCKET),
-  messagingSenderId: clean(env.VITE_FIREBASE_MESSAGING_SENDER_ID),
-  appId: clean(env.VITE_FIREBASE_APP_ID),
+  apiKey: clean(env.VITE_FIREBASE_API_KEY) || DEFAULT_FIREBASE_CONFIG.apiKey,
+  authDomain: clean(env.VITE_FIREBASE_AUTH_DOMAIN) || DEFAULT_FIREBASE_CONFIG.authDomain,
+  projectId: clean(env.VITE_FIREBASE_PROJECT_ID) || DEFAULT_FIREBASE_CONFIG.projectId,
+  storageBucket: clean(env.VITE_FIREBASE_STORAGE_BUCKET) || DEFAULT_FIREBASE_CONFIG.storageBucket,
+  messagingSenderId: clean(env.VITE_FIREBASE_MESSAGING_SENDER_ID) || DEFAULT_FIREBASE_CONFIG.messagingSenderId,
+  appId: clean(env.VITE_FIREBASE_APP_ID) || DEFAULT_FIREBASE_CONFIG.appId,
 };
 
 export const isFirebaseConfigured = Boolean(
