@@ -37,6 +37,9 @@ const SEED_MENUS = [
   { id: 'm6_soto_ayam', nama: 'Soto Ayam Lamongan Komplit', harga: 20000, sisa_porsi: 18, tersedia: true },
   { id: 'm7_gudeg', nama: 'Nasi Gudeg Komplit Krecek', harga: 22000, sisa_porsi: 0, tersedia: true },
   { id: 'm8_es_teh', nama: 'Es Teh Manis Melati Jumbo', harga: 5000, sisa_porsi: 50, tersedia: true },
+  { id: 'm9_asinan_kiamboy', nama: 'Oriental Asinan Kiamboy', harga: 22000, sisa_porsi: 25, tersedia: true },
+  { id: 'm10_fruity_salad', nama: 'Fruity Salad', harga: 20000, sisa_porsi: 30, tersedia: true },
+  { id: 'm11_mango_buko', nama: 'Drip Mango Buko', harga: 18000, sisa_porsi: 35, tersedia: true },
 ];
 
 const SEED_PELANGGAN = [

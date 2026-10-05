@@ -8,6 +8,9 @@ export const MENU_IMAGE_MAP: Record<string, string> = {
   m6_soto_ayam: '/images/menu/soto.jpg',
   m7_gudeg: '/images/menu/gudeg.jpg',
   m8_es_teh: '/images/menu/es_teh.png',
+  m9_asinan_kiamboy: '/images/menu/asinan_kiamboy.jpg',
+  m10_fruity_salad: '/images/menu/fruity_salad.jpg',
+  m11_mango_buko: '/images/menu/mango_buko.png',
 };
 
 export function getMenuImagePath(menuId: string, menuName: string): string | null {
@@ -26,6 +29,9 @@ export function getMenuImagePath(menuId: string, menuName: string): string | nul
   if (lower.includes('soto')) return '/images/menu/soto.jpg';
   if (lower.includes('gudeg')) return '/images/menu/gudeg.jpg';
   if (lower.includes('teh')) return '/images/menu/es_teh.png';
+  if (lower.includes('kiamboy') || lower.includes('asinan')) return '/images/menu/asinan_kiamboy.jpg';
+  if (lower.includes('salad') || lower.includes('fruity')) return '/images/menu/fruity_salad.jpg';
+  if (lower.includes('mango') || lower.includes('buko')) return '/images/menu/mango_buko.png';
 
   return null;
 }

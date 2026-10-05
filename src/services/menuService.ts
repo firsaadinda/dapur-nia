@@ -13,7 +13,7 @@ import {
   orderBy,
 } from 'firebase/firestore';
 
-const STORAGE_KEY = 'dapur_nia_menu_v2';
+const STORAGE_KEY = 'dapur_nia_menu_v3';
 
 const INITIAL_MENUS: Menu[] = [
   {
@@ -77,6 +77,30 @@ const INITIAL_MENUS: Menu[] = [
     nama: 'Es Teh Manis Melati Jumbo',
     harga: 5000,
     sisa_porsi: 50,
+    tersedia: true,
+    dibuat_pada: new Date().toISOString(),
+  },
+  {
+    id: 'm9_asinan_kiamboy',
+    nama: 'Oriental Asinan Kiamboy',
+    harga: 22000,
+    sisa_porsi: 25,
+    tersedia: true,
+    dibuat_pada: new Date().toISOString(),
+  },
+  {
+    id: 'm10_fruity_salad',
+    nama: 'Fruity Salad',
+    harga: 20000,
+    sisa_porsi: 30,
+    tersedia: true,
+    dibuat_pada: new Date().toISOString(),
+  },
+  {
+    id: 'm11_mango_buko',
+    nama: 'Drip Mango Buko',
+    harga: 18000,
+    sisa_porsi: 35,
     tersedia: true,
     dibuat_pada: new Date().toISOString(),
   },
