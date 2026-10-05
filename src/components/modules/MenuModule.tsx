@@ -21,8 +21,10 @@ export function MenuModule({ onMenuChanged }: { onMenuChanged?: () => void }) {
   const [nama, setNama] = useState('');
   const [harga, setHarga] = useState<number | ''>('');
   const [sisaPorsi, setSisaPorsi] = useState<number | ''>('');
+  const [kategori, setKategori] = useState<'makanan' | 'minuman' | 'dessert'>('makanan');
   const [tersedia, setTersedia] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<'semua' | 'makanan' | 'minuman' | 'dessert'>('semua');
 
   const fetchMenus = async () => {
     setLoading(true);
@@ -47,6 +49,7 @@ export function MenuModule({ onMenuChanged }: { onMenuChanged?: () => void }) {
     setNama('');
     setHarga('');
     setSisaPorsi('');
+    setKategori('makanan');
     setTersedia(true);
     setDialogOpen(true);
   };
@@ -56,6 +59,7 @@ export function MenuModule({ onMenuChanged }: { onMenuChanged?: () => void }) {
     setNama(menu.nama);
     setHarga(menu.harga);
     setSisaPorsi(menu.sisa_porsi);
+    setKategori(menu.kategori || 'makanan');
     setTersedia(menu.tersedia);
     setDialogOpen(true);
   };
@@ -70,6 +74,7 @@ export function MenuModule({ onMenuChanged }: { onMenuChanged?: () => void }) {
           nama,
           harga: Number(harga),
           sisa_porsi: Number(sisaPorsi),
+          kategori,
           tersedia,
         });
         toast.success(`Menu diperbarui: ${nama}`);
@@ -78,8 +83,9 @@ export function MenuModule({ onMenuChanged }: { onMenuChanged?: () => void }) {
           nama,
           harga: Number(harga),
           sisa_porsi: Number(sisaPorsi),
+          kategori,
           tersedia,
-        });
+        } as any); // using any because addMenu in service hasn't been fully typed for kategori yet, or it will just pass through
         toast.success(`Menu tersimpan: ${nama}`);
       }
 
@@ -118,10 +124,10 @@ export function MenuModule({ onMenuChanged }: { onMenuChanged?: () => void }) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/70 backdrop-blur-md p-4 rounded-xl border border-white/60 shadow-sm">
         <div>
           <h2 className="text-xl font-bold font-heading text-[#36491C] tracking-tight">
-            Menu Harian
+            Kelola Menu
           </h2>
           <p className="text-xs text-[#5F6B4F]">
-            Total: <strong>{menus.length}</strong> menu katering terdaftar
+            Kelola sajian katering: tambah, ubah, dan hapus menu ({menus.length} terdaftar)
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -176,10 +182,27 @@ export function MenuModule({ onMenuChanged }: { onMenuChanged?: () => void }) {
           </div>
         )}
 
+        {/* Category Filters */}
+        {!loading && !error && menus.length > 0 && (
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {(['semua', 'makanan', 'minuman', 'dessert'] as const).map(cat => (
+              <Button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                variant={activeCategory === cat ? 'default' : 'outline'}
+                className={activeCategory === cat ? 'bg-[#C2410C] hover:bg-[#9A3412] text-white border-none' : 'text-[#5F6B4F] border-[#E0E2D8] hover:border-[#C2410C] hover:text-[#C2410C]'}
+                size="sm"
+              >
+                {cat === 'semua' ? 'Semua Kategori' : cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </Button>
+            ))}
+          </div>
+        )}
+
         {/* Original Menu Cards Grid */}
         {!loading && !error && menus.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {menus.map((item) => {
+            {menus.filter(item => activeCategory === 'semua' || item.kategori === activeCategory).map((item) => {
               const isHabis = item.sisa_porsi <= 0;
               const imgSrc = getMenuImagePath(item.id, item.nama);
 
@@ -306,6 +329,23 @@ export function MenuModule({ onMenuChanged }: { onMenuChanged?: () => void }) {
                 <span>1 - 60 karakter</span>
                 <span>{nama.length}/60</span>
               </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="kategori-m" className="text-xs font-bold text-[#1C2311]">
+                Kategori
+              </Label>
+              <select
+                id="kategori-m"
+                className="flex h-11 w-full rounded-md border border-[#E0E2D8] bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#4D642D] disabled:cursor-not-allowed disabled:opacity-50"
+                value={kategori}
+                onChange={(e) => setKategori(e.target.value as any)}
+                required
+              >
+                <option value="makanan">Makanan</option>
+                <option value="minuman">Minuman</option>
+                <option value="dessert">Dessert</option>
+              </select>
             </div>
 
             <div className="grid grid-cols-2 gap-4">

@@ -29,17 +29,22 @@ const firebaseConfig = {
 };
 
 const SEED_MENUS = [
-  { id: 'm1_ayam_bakar', nama: 'Nasi Ayam Bakar Madu', harga: 25000, sisa_porsi: 30, tersedia: true },
-  { id: 'm2_rendang', nama: 'Nasi Rendang Daging Sapi', harga: 35000, sisa_porsi: 15, tersedia: true },
-  { id: 'm3_ayam_lengkuas', nama: 'Nasi Ayam Goreng Lengkuas', harga: 24000, sisa_porsi: 25, tersedia: true },
-  { id: 'm4_sate_ayam', nama: 'Sate Ayam Madura + Lontong', harga: 25000, sisa_porsi: 20, tersedia: true },
-  { id: 'm5_cumi_cabe_ijo', nama: 'Nasi Cumi Cabai Hijau', harga: 28000, sisa_porsi: 12, tersedia: true },
-  { id: 'm6_soto_ayam', nama: 'Soto Ayam Lamongan Komplit', harga: 20000, sisa_porsi: 18, tersedia: true },
-  { id: 'm7_gudeg', nama: 'Nasi Gudeg Komplit Krecek', harga: 22000, sisa_porsi: 0, tersedia: true },
-  { id: 'm8_es_teh', nama: 'Es Teh Manis Melati Jumbo', harga: 5000, sisa_porsi: 50, tersedia: true },
-  { id: 'm9_asinan_kiamboy', nama: 'Oriental Asinan Kiamboy', harga: 22000, sisa_porsi: 25, tersedia: true },
-  { id: 'm10_fruity_salad', nama: 'Fruity Salad', harga: 20000, sisa_porsi: 30, tersedia: true },
-  { id: 'm11_mango_buko', nama: 'Drip Mango Buko', harga: 18000, sisa_porsi: 35, tersedia: true },
+  { id: 'm1_ayam_bakar', nama: 'Nasi Ayam Bakar Madu', harga: 25000, kategori: 'makanan', sisa_porsi: 30, tersedia: true },
+  { id: 'm2_rendang', nama: 'Nasi Rendang Daging Sapi', harga: 35000, kategori: 'makanan', sisa_porsi: 15, tersedia: true },
+  { id: 'm3_ayam_lengkuas', nama: 'Nasi Ayam Goreng Lengkuas', harga: 24000, kategori: 'makanan', sisa_porsi: 25, tersedia: true },
+  { id: 'm4_sate_ayam', nama: 'Sate Ayam Madura + Lontong', harga: 25000, kategori: 'makanan', sisa_porsi: 20, tersedia: true },
+  { id: 'm5_cumi_cabe_ijo', nama: 'Nasi Cumi Cabai Hijau', harga: 28000, kategori: 'makanan', sisa_porsi: 12, tersedia: true },
+  { id: 'm6_soto_ayam', nama: 'Soto Ayam Lamongan Komplit', harga: 20000, kategori: 'makanan', sisa_porsi: 18, tersedia: true },
+  { id: 'm7_gudeg', nama: 'Nasi Gudeg Komplit Krecek', harga: 22000, kategori: 'makanan', sisa_porsi: 0, tersedia: true },
+  { id: 'm14_pempek_pacak', nama: 'Pempek Pacak', harga: 25000, kategori: 'makanan', sisa_porsi: 20, tersedia: true },
+  { id: 'm8_es_teh', nama: 'Es Teh Manis Melati Jumbo', harga: 5000, kategori: 'minuman', sisa_porsi: 50, tersedia: true },
+  { id: 'm12_es_kelapa_jeruk', nama: 'Es Kelapa Jeruk', harga: 15000, kategori: 'minuman', sisa_porsi: 40, tersedia: true },
+  { id: 'm13_fresh_mojito', nama: 'Fresh Mojito Mocktail', harga: 18000, kategori: 'minuman', sisa_porsi: 25, tersedia: true },
+  { id: 'm15_jus_alpukat', nama: 'Jus Alpukat', harga: 12000, kategori: 'minuman', sisa_porsi: 20, tersedia: true },
+  { id: 'm9_asinan_kiamboy', nama: 'Oriental Asinan Kiamboy', harga: 22000, kategori: 'dessert', sisa_porsi: 25, tersedia: true },
+  { id: 'm10_fruity_salad', nama: 'Fruity Salad', harga: 20000, kategori: 'dessert', sisa_porsi: 30, tersedia: true },
+  { id: 'm11_mango_buko', nama: 'Drip Mango Buko', harga: 18000, kategori: 'dessert', sisa_porsi: 35, tersedia: true },
+  { id: 'm16_puding_strawberry', nama: 'Puding Creamy Strawberry', harga: 15000, kategori: 'dessert', sisa_porsi: 25, tersedia: true },
 ];
 
 const SEED_PELANGGAN = [
@@ -109,6 +114,7 @@ async function seed() {
       await setDoc(doc(db, 'menu', m.id), {
         nama: m.nama,
         harga: m.harga,
+        kategori: m.kategori,
         sisa_porsi: m.sisa_porsi,
         tersedia: m.tersedia,
         dibuat_pada: serverTimestamp(),

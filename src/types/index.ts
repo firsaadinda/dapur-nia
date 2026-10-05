@@ -12,6 +12,7 @@ export interface Menu {
   id: string;
   nama: string; // 1 - 60 karakter
   harga: number; // Angka bulat rupiah, >= 0
+  kategori?: 'makanan' | 'minuman' | 'dessert'; // Kategori menu
   sisa_porsi: number; // Angka bulat, >= 0. Jika 0 tampil sebagai "Habis"
   tersedia: boolean; // true: tampil di daftar, false: disembunyikan
   dibuat_pada?: any; // Firestore serverTimestamp atau Date / string

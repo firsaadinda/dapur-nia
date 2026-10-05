@@ -10,16 +10,16 @@ import {
   deleteDoc,
   serverTimestamp,
   query,
-  orderBy,
 } from 'firebase/firestore';
 
-const STORAGE_KEY = 'dapur_nia_menu_v3';
+const STORAGE_KEY = 'dapur_nia_menu_v7';
 
 const INITIAL_MENUS: Menu[] = [
   {
     id: 'm1_ayam_bakar',
     nama: 'Nasi Ayam Bakar Madu',
     harga: 25000,
+    kategori: 'makanan',
     sisa_porsi: 30,
     tersedia: true,
     dibuat_pada: new Date().toISOString(),
@@ -28,6 +28,7 @@ const INITIAL_MENUS: Menu[] = [
     id: 'm2_rendang',
     nama: 'Nasi Rendang Daging Sapi',
     harga: 35000,
+    kategori: 'makanan',
     sisa_porsi: 15,
     tersedia: true,
     dibuat_pada: new Date().toISOString(),
@@ -36,6 +37,7 @@ const INITIAL_MENUS: Menu[] = [
     id: 'm3_ayam_lengkuas',
     nama: 'Nasi Ayam Goreng Lengkuas',
     harga: 24000,
+    kategori: 'makanan',
     sisa_porsi: 25,
     tersedia: true,
     dibuat_pada: new Date().toISOString(),
@@ -44,6 +46,7 @@ const INITIAL_MENUS: Menu[] = [
     id: 'm4_sate_ayam',
     nama: 'Sate Ayam Madura + Lontong',
     harga: 25000,
+    kategori: 'makanan',
     sisa_porsi: 20,
     tersedia: true,
     dibuat_pada: new Date().toISOString(),
@@ -52,6 +55,7 @@ const INITIAL_MENUS: Menu[] = [
     id: 'm5_cumi_cabe_ijo',
     nama: 'Nasi Cumi Cabai Hijau',
     harga: 28000,
+    kategori: 'makanan',
     sisa_porsi: 12,
     tersedia: true,
     dibuat_pada: new Date().toISOString(),
@@ -60,6 +64,7 @@ const INITIAL_MENUS: Menu[] = [
     id: 'm6_soto_ayam',
     nama: 'Soto Ayam Lamongan Komplit',
     harga: 20000,
+    kategori: 'makanan',
     sisa_porsi: 18,
     tersedia: true,
     dibuat_pada: new Date().toISOString(),
@@ -68,6 +73,7 @@ const INITIAL_MENUS: Menu[] = [
     id: 'm7_gudeg',
     nama: 'Nasi Gudeg Komplit Krecek',
     harga: 22000,
+    kategori: 'makanan',
     sisa_porsi: 0, // Habis untuk pengujian kuota 0
     tersedia: true,
     dibuat_pada: new Date().toISOString(),
@@ -76,7 +82,53 @@ const INITIAL_MENUS: Menu[] = [
     id: 'm8_es_teh',
     nama: 'Es Teh Manis Melati Jumbo',
     harga: 5000,
+    kategori: 'minuman',
     sisa_porsi: 50,
+    tersedia: true,
+    dibuat_pada: new Date().toISOString(),
+  },
+  {
+    id: 'm12_es_kelapa_jeruk',
+    nama: 'Es Kelapa Jeruk',
+    harga: 15000,
+    kategori: 'minuman',
+    sisa_porsi: 40,
+    tersedia: true,
+    dibuat_pada: new Date().toISOString(),
+  },
+  {
+    id: 'm13_fresh_mojito',
+    nama: 'Fresh Mojito Mocktail',
+    harga: 18000,
+    kategori: 'minuman',
+    sisa_porsi: 25,
+    tersedia: true,
+    dibuat_pada: new Date().toISOString(),
+  },
+  {
+    id: 'm14_pempek_pacak',
+    nama: 'Pempek Pacak',
+    harga: 25000,
+    kategori: 'makanan',
+    sisa_porsi: 20,
+    tersedia: true,
+    dibuat_pada: new Date().toISOString(),
+  },
+  {
+    id: 'm15_jus_alpukat',
+    nama: 'Jus Alpukat',
+    harga: 12000,
+    kategori: 'minuman',
+    sisa_porsi: 20,
+    tersedia: true,
+    dibuat_pada: new Date().toISOString(),
+  },
+  {
+    id: 'm16_puding_strawberry',
+    nama: 'Puding Creamy Strawberry',
+    harga: 15000,
+    kategori: 'dessert',
+    sisa_porsi: 25,
     tersedia: true,
     dibuat_pada: new Date().toISOString(),
   },
@@ -84,6 +136,7 @@ const INITIAL_MENUS: Menu[] = [
     id: 'm9_asinan_kiamboy',
     nama: 'Oriental Asinan Kiamboy',
     harga: 22000,
+    kategori: 'dessert',
     sisa_porsi: 25,
     tersedia: true,
     dibuat_pada: new Date().toISOString(),
@@ -92,6 +145,7 @@ const INITIAL_MENUS: Menu[] = [
     id: 'm10_fruity_salad',
     nama: 'Fruity Salad',
     harga: 20000,
+    kategori: 'dessert',
     sisa_porsi: 30,
     tersedia: true,
     dibuat_pada: new Date().toISOString(),
@@ -100,6 +154,7 @@ const INITIAL_MENUS: Menu[] = [
     id: 'm11_mango_buko',
     nama: 'Drip Mango Buko',
     harga: 18000,
+    kategori: 'dessert',
     sisa_porsi: 35,
     tersedia: true,
     dibuat_pada: new Date().toISOString(),
@@ -146,25 +201,62 @@ function saveLocalMenus(menus: Menu[]) {
 }
 
 export async function getMenus(): Promise<Menu[]> {
+  let menus: Menu[] = [];
   if (db) {
     try {
-      const q = query(collection(db, 'menu'), orderBy('nama', 'asc'));
+      const q = query(collection(db, 'menu'));
       const snapshot = await getDocs(q);
-      return snapshot.docs.map((docSnap) => ({
+      menus = snapshot.docs.map((docSnap) => ({
         id: docSnap.id,
         ...(docSnap.data() as Omit<Menu, 'id'>),
       }));
     } catch (err) {
       console.error('Error fetching menus from Firestore, falling back to local:', err);
+      menus = getLocalMenus();
     }
+  } else {
+    menus = getLocalMenus();
   }
-  return getLocalMenus();
+
+  // Custom sort order for specific items
+  const customOrder = [
+    'm1_ayam_bakar',
+    'm2_rendang',
+    'm3_ayam_lengkuas',
+    'm4_sate_ayam',
+    'm5_cumi_cabe_ijo',
+    'm6_soto_ayam',
+    'm7_gudeg',
+    'm14_pempek_pacak',
+    'm8_es_teh',
+    'm15_jus_alpukat',
+    'm12_es_kelapa_jeruk',
+    'm13_fresh_mojito',
+    'm10_fruity_salad',
+    'm9_asinan_kiamboy',
+    'm11_mango_buko',
+    'm16_puding_strawberry',
+  ];
+
+  return menus.sort((a, b) => {
+    const indexA = customOrder.indexOf(a.id);
+    const indexB = customOrder.indexOf(b.id);
+    
+    // If both are in customOrder, sort by their position
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+    // If only one is in customOrder, it comes first
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    // If neither, sort alphabetically by name
+    return a.nama.localeCompare(b.nama);
+  });
 }
 
 export async function addMenu(data: {
   nama: string;
   harga: number;
   sisa_porsi: number;
+  kategori?: 'makanan' | 'minuman' | 'dessert';
   tersedia: boolean;
 }): Promise<Menu> {
   const validation = validateMenu(data);
@@ -178,6 +270,7 @@ export async function addMenu(data: {
       nama: data.nama.trim(),
       harga: Number(data.harga),
       sisa_porsi: Number(data.sisa_porsi),
+      kategori: data.kategori || 'makanan',
       tersedia: Boolean(data.tersedia),
       dibuat_pada: serverTimestamp(),
     });
@@ -186,6 +279,7 @@ export async function addMenu(data: {
       nama: data.nama.trim(),
       harga: Number(data.harga),
       sisa_porsi: Number(data.sisa_porsi),
+      kategori: data.kategori || 'makanan',
       tersedia: Boolean(data.tersedia),
       dibuat_pada: new Date().toISOString(),
     };
@@ -197,6 +291,7 @@ export async function addMenu(data: {
     nama: data.nama.trim(),
     harga: Number(data.harga),
     sisa_porsi: Number(data.sisa_porsi),
+    kategori: data.kategori || 'makanan',
     tersedia: Boolean(data.tersedia),
     dibuat_pada: new Date().toISOString(),
   };

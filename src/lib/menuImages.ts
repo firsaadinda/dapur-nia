@@ -11,6 +11,11 @@ export const MENU_IMAGE_MAP: Record<string, string> = {
   m9_asinan_kiamboy: '/images/menu/asinan_kiamboy.jpg',
   m10_fruity_salad: '/images/menu/fruity_salad.jpg',
   m11_mango_buko: '/images/menu/mango_buko.png',
+  m12_es_kelapa_jeruk: '/images/menu/es_kelapa_jeruk.png',
+  m13_fresh_mojito: '/images/menu/fresh_mojito.jpg',
+  m14_pempek_pacak: '/images/menu/pempek_pacak.png',
+  m15_jus_alpukat: '/images/menu/jus_alpukat.jpg',
+  m16_puding_strawberry: '/images/menu/puding_strawberry.png',
 };
 
 export function getMenuImagePath(menuId: string, menuName: string): string | null {
@@ -32,6 +37,11 @@ export function getMenuImagePath(menuId: string, menuName: string): string | nul
   if (lower.includes('kiamboy') || lower.includes('asinan')) return '/images/menu/asinan_kiamboy.jpg';
   if (lower.includes('salad') || lower.includes('fruity')) return '/images/menu/fruity_salad.jpg';
   if (lower.includes('mango') || lower.includes('buko')) return '/images/menu/mango_buko.png';
+  if (lower.includes('kelapa') || lower.includes('jeruk')) return '/images/menu/es_kelapa_jeruk.png';
+  if (lower.includes('mojito') || lower.includes('mocktail')) return '/images/menu/fresh_mojito.jpg';
+  if (lower.includes('pempek') || lower.includes('pacak')) return '/images/menu/pempek_pacak.png';
+  if (lower.includes('alpukat')) return '/images/menu/jus_alpukat.jpg';
+  if (lower.includes('puding') || lower.includes('strawberry')) return '/images/menu/puding_strawberry.png';
 
   return null;
 }
