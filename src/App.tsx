@@ -40,7 +40,6 @@ export function App() {
   // Initial tab determination from URL hash or localStorage
   const getInitialTab = (): TabId => {
     if (typeof window !== 'undefined') {
-      const hash = window.location.hash.replace(/^#\/?/, '') as TabId;
       const validTabs: TabId[] = [
         'daftar-menu',
         'kelola-menu',
@@ -50,7 +49,16 @@ export function App() {
         'pesanan',
         'laporan',
       ];
+
+      // 1. Check pathname (e.g. /kelola-menu, /masuk)
+      const path = window.location.pathname.replace(/^\/+/, '').replace(/\/+$/, '') as TabId;
+      if (validTabs.includes(path)) return path;
+
+      // 2. Check hash (e.g. #/kelola-menu, #kelola-menu)
+      const hash = window.location.hash.replace(/^#\/?/, '') as TabId;
       if (validTabs.includes(hash)) return hash;
+
+      // 3. Check localStorage
       const saved = localStorage.getItem(TAB_STORAGE_KEY) as TabId;
       if (saved && validTabs.includes(saved)) return saved;
     }
@@ -61,13 +69,29 @@ export function App() {
   const [ujiTembusOpen, setUjiTembusOpen] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Sync hash and localStorage when activeTab changes
+  // Sync pathname, hash, and localStorage when activeTab changes
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      window.location.hash = activeTab;
       localStorage.setItem(TAB_STORAGE_KEY, activeTab);
+      const targetPath = activeTab === 'daftar-menu' ? '/' : `/${activeTab}`;
+      if (window.location.pathname !== targetPath) {
+        window.history.pushState(null, '', targetPath);
+      }
     }
   }, [activeTab]);
+
+  // Listen to popstate and hashchange (browser Back / Forward navigation)
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setActiveTab(getInitialTab());
+    };
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
+  }, []);
 
   // Protected Route Logic:
   // When user is not authenticated and attempts to open kelola-menu, redirect to masuk
