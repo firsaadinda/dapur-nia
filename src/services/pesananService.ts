@@ -159,7 +159,8 @@ export async function createPesanan(input: {
 
 export async function updatePesananStatus(
   pesananId: string,
-  nextStatus: OrderStatus
+  nextStatus: OrderStatus,
+  buktiBayar?: string
 ): Promise<void> {
   const allPesanan = await getPesananList();
   const target = allPesanan.find((p) => p.id === pesananId);
@@ -187,7 +188,11 @@ export async function updatePesananStatus(
 
   if (db) {
     const docRef = doc(db, 'pesanan', pesananId);
-    await updateDoc(docRef, { status: nextStatus });
+    const updateData: any = { status: nextStatus };
+    if (buktiBayar) {
+      updateData.bukti_bayar = buktiBayar;
+    }
+    await updateDoc(docRef, updateData);
     return;
   }
 
@@ -195,6 +200,9 @@ export async function updatePesananStatus(
   const idx = localList.findIndex((p) => p.id === pesananId);
   if (idx !== -1) {
     localList[idx].status = nextStatus;
+    if (buktiBayar) {
+      localList[idx].bukti_bayar = buktiBayar;
+    }
     saveLocalPesanan(localList);
   }
 }

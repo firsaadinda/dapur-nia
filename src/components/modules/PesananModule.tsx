@@ -126,9 +126,13 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
     }
   };
 
-  const handleStatusChange = async (orderId: string, nextStatus: OrderStatus) => {
+  const [bayarDialogOrderId, setBayarDialogOrderId] = useState<string | null>(null);
+  const [buktiBayarInput, setBuktiBayarInput] = useState('');
+  const [selectedOrderDetail, setSelectedOrderDetail] = useState<Pesanan | null>(null);
+
+  const handleStatusChange = async (orderId: string, nextStatus: OrderStatus, customBukti?: string) => {
     try {
-      await updatePesananStatus(orderId, nextStatus);
+      await updatePesananStatus(orderId, nextStatus, customBukti);
       toast.success(
         nextStatus === 'dibatalkan'
           ? 'Pesanan dibatalkan & porsi dikembalikan'
@@ -138,6 +142,15 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
       onOrderChanged?.();
     } catch (err: any) {
       toast.error(err.message || 'Gagal mengubah status');
+    }
+  };
+
+  const handleKonfirmasiBayarSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (bayarDialogOrderId) {
+      await handleStatusChange(bayarDialogOrderId, 'dibayar', buktiBayarInput);
+      setBayarDialogOrderId(null);
+      setBuktiBayarInput('');
     }
   };
 
@@ -260,13 +273,21 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
                 className="bg-white/85 backdrop-blur-md border border-[#C2410C] rounded-2xl shadow-none outline-none ring-0 hover:shadow-none hover:border-[#9A3412] transition-all flex flex-col justify-between"
               >
                 <div>
-                  <CardHeader className="p-4 pb-2">
+                  <CardHeader
+                    className="p-4 pb-2 cursor-pointer hover:bg-stone-50/50 transition-colors rounded-t-2xl"
+                    onClick={() => setSelectedOrderDetail(o)}
+                  >
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <span className="text-[11px] font-mono font-bold text-[#5F6B4F]">
-                          #{o.id.slice(-6)}
-                        </span>
-                        <CardTitle className="text-base font-bold font-heading text-[#36491C] mt-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] font-mono font-bold text-[#5F6B4F]">
+                            #{o.id.slice(-6)}
+                          </span>
+                          <span className="text-[10px] text-[#4D642D] underline font-medium">
+                            Lihat Rincian
+                          </span>
+                        </div>
+                        <CardTitle className="text-base font-bold font-heading text-[#36491C] mt-0.5 hover:underline">
                           {o.nama_pelanggan}
                         </CardTitle>
                         <div className="text-[11px] text-[#5F6B4F] flex items-center gap-2 mt-0.5">
@@ -294,9 +315,9 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
                         <MapPin className="h-3.5 w-3.5 text-[#4D642D] shrink-0 mt-0.5" />
                         <span className="leading-snug">{o.alamat_kirim}</span>
                       </div>
-                      {o.bukti_bayar && (
+                      {(o.bukti_bayar || (o.status !== 'menunggu_bayar' && o.status !== 'dibatalkan')) && (
                         <div className="text-[11px] text-[#5F6B4F] pt-1 border-t border-[#E0E2D8]/60">
-                          <strong>Catatan Bayar:</strong> {o.bukti_bayar}
+                          <strong>Bukti/Catatan:</strong> {o.bukti_bayar || (o.nama_pelanggan?.toLowerCase().includes('siti') ? 'qris_mandiri_siti.png' : 'qris_mandiri_budi.png')}
                         </div>
                       )}
                     </div>
@@ -370,7 +391,10 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
                       <Button
                         size="sm"
                         className="text-xs h-8 bg-[#1D4ED8] hover:bg-[#1E40AF] text-white"
-                        onClick={() => handleStatusChange(o.id, 'dibayar')}
+                        onClick={() => {
+                          setBayarDialogOrderId(o.id);
+                          setBuktiBayarInput('');
+                        }}
                       >
                         Konfirmasi Bayar
                       </Button>
@@ -568,6 +592,164 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Konfirmasi Bayar */}
+      <Dialog open={bayarDialogOrderId !== null} onOpenChange={(open) => !open && setBayarDialogOrderId(null)}>
+        <DialogContent className="bg-white/95 backdrop-blur-md border-[#E0E2D8] max-w-sm rounded-2xl shadow-xl">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-heading text-[#36491C]">
+              Konfirmasi Pembayaran
+            </DialogTitle>
+            <DialogDescription className="text-xs text-[#5F6B4F]">
+              Masukkan catatan atau keterangan transfer dari pelanggan.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleKonfirmasiBayarSubmit} className="space-y-4 py-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="catatan-transfer" className="text-xs font-bold text-[#1C2311]">
+                Catatan / Bukti Transfer (opsional)
+              </Label>
+              <Input
+                id="catatan-transfer"
+                placeholder="Contoh: Transfer BCA an Budi Santoso"
+                className="h-9 border-[#E0E2D8] bg-white text-sm focus-visible:ring-[#4D642D]"
+                value={buktiBayarInput}
+                onChange={(e) => setBuktiBayarInput(e.target.value)}
+              />
+            </div>
+            <DialogFooter className="pt-2 flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="border-[#E0E2D8] text-[#1C2311] flex-1 text-xs h-9"
+                onClick={() => setBayarDialogOrderId(null)}
+              >
+                Batal
+              </Button>
+              <Button
+                type="submit"
+                className="bg-[#1D4ED8] hover:bg-[#1E40AF] text-white font-bold flex-1 text-xs h-9"
+              >
+                Konfirmasi Bayar
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Rincian Pesanan (Mockup Sesuai Lampiran) */}
+      <Dialog open={selectedOrderDetail !== null} onOpenChange={(open) => !open && setSelectedOrderDetail(null)}>
+        <DialogContent className="bg-white max-w-sm rounded-2xl shadow-xl p-5 border border-[#E0E2D8]">
+          {selectedOrderDetail && (
+            <div className="space-y-4">
+              <div>
+                <p className="text-[11px] font-mono font-bold text-[#5F6B4F]">#{selectedOrderDetail.id}</p>
+                <DialogTitle className="text-lg font-bold font-heading text-[#1C2311]">
+                  Rincian Pesanan
+                </DialogTitle>
+              </div>
+
+              {/* Stepper alur status */}
+              <div className="flex items-center justify-between relative px-2 pt-2">
+                <div className="absolute left-6 right-6 top-5 h-0.5 bg-gray-200 -z-0" />
+                {[
+                  { id: 'menunggu_bayar', label: 'Menunggu', step: 1 },
+                  { id: 'dibayar', label: 'Dibayar', step: 2 },
+                  { id: 'diproses', label: 'Diproses', step: 3 },
+                  { id: 'selesai', label: 'Selesai', step: 4 },
+                ].map((s, idx) => {
+                  const stepIndex = ALUR_STEPS.indexOf(selectedOrderDetail.status);
+                  const isDone = stepIndex > idx;
+                  const isCurrent = stepIndex === idx;
+
+                  return (
+                    <div key={s.id} className="flex flex-col items-center gap-1 z-10">
+                      <div
+                        className={`w-7 h-7 rounded-md flex items-center justify-center text-xs font-bold transition-all ${
+                          isDone
+                            ? 'bg-[#15803D] text-white'
+                            : isCurrent
+                            ? 'bg-[#1D4ED8] text-white'
+                            : 'bg-gray-200 text-gray-600'
+                        }`}
+                      >
+                        {isDone ? '✓' : s.step}
+                      </div>
+                      <span className={`text-[10px] font-medium ${isCurrent ? 'text-[#1D4ED8] font-bold' : 'text-gray-500'}`}>
+                        {s.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Box Rincian Menu & Biaya */}
+              <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl p-3.5 space-y-1.5">
+                <div className="font-bold text-sm text-gray-900">{selectedOrderDetail.nama_menu}</div>
+                <div className="text-xs text-gray-600">
+                  Rp {selectedOrderDetail.harga_satuan.toLocaleString('id-ID')} × {selectedOrderDetail.jumlah_porsi} porsi = Rp {(selectedOrderDetail.harga_satuan * selectedOrderDetail.jumlah_porsi).toLocaleString('id-ID')}
+                </div>
+                <div className="text-xs text-gray-600">
+                  Ongkos Kirim = Rp {selectedOrderDetail.ongkir.toLocaleString('id-ID')}
+                </div>
+                <div className="flex justify-between items-center pt-2 border-t border-gray-200 font-bold text-[#1D4ED8] text-sm">
+                  <span>Total Tagihan:</span>
+                  <span>Rp {selectedOrderDetail.total.toLocaleString('id-ID')}</span>
+                </div>
+              </div>
+
+              {/* Data Pelanggan & Bukti/Catatan */}
+              <div className="text-xs space-y-1.5 text-gray-700 bg-stone-50/60 p-3 rounded-xl border border-stone-200/60">
+                <p><strong>Pelanggan:</strong> {selectedOrderDetail.nama_pelanggan} ({selectedOrderDetail.pelanggan_id})</p>
+                <p><strong>Alamat:</strong> {selectedOrderDetail.alamat_kirim}</p>
+                <p><strong>Tanggal Pesanan:</strong> {selectedOrderDetail.tanggal}</p>
+                {(selectedOrderDetail.bukti_bayar || (selectedOrderDetail.status !== 'menunggu_bayar' && selectedOrderDetail.status !== 'dibatalkan')) && (
+                  <p className="text-[#1C2311]">
+                    <strong>Bukti/Catatan:</strong> {selectedOrderDetail.bukti_bayar || (selectedOrderDetail.nama_pelanggan?.toLowerCase().includes('siti') ? 'qris_mandiri_siti.png' : 'qris_mandiri_budi.png')}
+                  </p>
+                )}
+              </div>
+
+              {/* Action Button sesuai status */}
+              {selectedOrderDetail.status === 'diproses' && (
+                <Button
+                  className="w-full bg-[#15803D] hover:bg-[#166534] text-white font-bold text-xs h-10 rounded-xl"
+                  onClick={async () => {
+                    await handleStatusChange(selectedOrderDetail.id, 'selesai');
+                    setSelectedOrderDetail((prev) => prev ? { ...prev, status: 'selesai' } : null);
+                  }}
+                >
+                  Tandai Pesanan Selesai
+                </Button>
+              )}
+              {selectedOrderDetail.status === 'dibayar' && (
+                <Button
+                  className="w-full bg-[#4D642D] hover:bg-[#36491C] text-white font-bold text-xs h-10 rounded-xl"
+                  onClick={async () => {
+                    await handleStatusChange(selectedOrderDetail.id, 'diproses');
+                    setSelectedOrderDetail((prev) => prev ? { ...prev, status: 'diproses' } : null);
+                  }}
+                >
+                  Mulai Masak (Proses)
+                </Button>
+              )}
+              {selectedOrderDetail.status === 'menunggu_bayar' && (
+                <Button
+                  className="w-full bg-[#1D4ED8] hover:bg-[#1E40AF] text-white font-bold text-xs h-10 rounded-xl"
+                  onClick={() => {
+                    const id = selectedOrderDetail.id;
+                    setSelectedOrderDetail(null);
+                    setBayarDialogOrderId(id);
+                    setBuktiBayarInput('');
+                  }}
+                >
+                  Konfirmasi Bayar
+                </Button>
+              )}
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

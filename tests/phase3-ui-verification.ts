@@ -80,7 +80,7 @@ async function runPhase3Simulation() {
   // Skenario 5: Pemeriksaan Laporan Penjualan
   console.log('\n--- Skenario 5: Tampilan Laporan Harian Terintegrasi ---');
   const report = await getLaporanHarian('2026-10-02');
-  const itemInReport = report.rincian_menu.find((r) => r.menu_id === createdMenu.id);
+  const itemInReport = report.rincian_menu.find((r: any) => r.menu_id === createdMenu.id);
   assert(itemInReport?.porsi_terjual === 3, 'Laporan harian mencatat porsi terjual tepat 3 porsi');
   assert(itemInReport?.total_omzet === 28000 * 3, 'Omzet menu tepat Rp84.000');
   assert(report.total_uang_masuk >= expectedTotal, 'Total uang masuk akumulatif mencakup omzet + ongkir');

@@ -56,10 +56,11 @@ const SEED_PESANAN = [
     menu_id: 'm1_ayam_bakar',
     nama_menu: 'Nasi Ayam Bakar Madu',
     harga_satuan: 25000,
-    jumlah_porsi: 2,
+    jumlah_porsi: 20,
     ongkir: 5000,
-    total: 55000,
+    total: 505000,
     status: 'dibayar',
+    bukti_bayar: 'qris_mandiri_budi.png',
     tanggal: today
   },
   {
@@ -70,10 +71,11 @@ const SEED_PESANAN = [
     menu_id: 'm8_es_teh',
     nama_menu: 'Es Teh Manis Melati Jumbo',
     harga_satuan: 5000,
-    jumlah_porsi: 4,
+    jumlah_porsi: 12,
     ongkir: 0,
-    total: 20000,
+    total: 60000,
     status: 'selesai',
+    bukti_bayar: 'qris_mandiri_siti.png',
     tanggal: today
   },
   {
@@ -84,10 +86,11 @@ const SEED_PESANAN = [
     menu_id: 'm5_cumi_cabe_ijo',
     nama_menu: 'Nasi Cumi Cabai Hijau',
     harga_satuan: 28000,
-    jumlah_porsi: 1,
-    ongkir: 10000,
-    total: 38000,
+    jumlah_porsi: 2,
+    ongkir: 14000,
+    total: 70000,
     status: 'menunggu_bayar',
+    bukti_bayar: '',
     tanggal: today
   }
 ];
@@ -134,6 +137,7 @@ async function seed() {
         ongkir: p.ongkir,
         total: p.total,
         status: p.status,
+        bukti_bayar: p.bukti_bayar || '',
         tanggal: p.tanggal,
         dibuat_pada: serverTimestamp(),
       });

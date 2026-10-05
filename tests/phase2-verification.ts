@@ -150,9 +150,9 @@ async function runPhase2Tests() {
   const laporan = await getLaporanHarian('2026-10-02');
   assert(laporan.tanggal === '2026-10-02', 'Laporan tanggal sesuai');
   // Order 1 (selesai, 4 porsi) harus masuk. Order 2 (dibatalkan, 3 porsi) TIDAK BOLEH masuk!
-  const menuSummary = laporan.rincian_menu.find((m) => m.menu_id === newMenu.id);
+  const menuSummary = laporan.rincian_menu.find((m: any) => m.menu_id === newMenu.id);
   assert(menuSummary?.porsi_terjual === 4, 'Hanya pesanan sah yang dihitung (4 porsi)');
-  const containsCancelled = laporan.daftar_pesanan.some((p) => p.status === 'dibatalkan');
+  const containsCancelled = laporan.daftar_pesanan.some((p: any) => p.status === 'dibatalkan');
   assert(!containsCancelled, 'Acceptance Criteria 2: Pesanan dibatalkan mutlak tidak dihitung di laporan');
 
   // Empty state check
