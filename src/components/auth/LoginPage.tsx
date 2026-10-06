@@ -168,6 +168,38 @@ export function LoginPage({ onSuccess, onGoToRegister, onGoToHome }: LoginPagePr
           </Button>
         </form>
 
+        {/* Quick Test Accounts Box */}
+        <div className="mt-5 p-3 rounded-xl bg-[#F4F7EF] border border-[#D7DFC9] space-y-2">
+          <div className="text-[11px] font-bold text-[#36491C] flex items-center justify-between">
+            <span>Akun Pengujian Demo (Cepat):</span>
+            <span className="text-[10px] text-[#5F6B4F]">Klik untuk isi otomatis</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('pemilik.dapurnia@gmail.com');
+                setPassword('Password123!');
+              }}
+              className="px-2.5 py-1.5 rounded-lg bg-white border border-[#E0E2D8] hover:border-[#C2410C] hover:text-[#C2410C] text-[11px] text-left transition-colors cursor-pointer"
+            >
+              <strong className="block font-bold text-[#C2410C]">👑 Pemilik</strong>
+              <span className="text-[10px] text-[#5F6B4F] truncate block">pemilik.dapurnia...</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('staf.dapurnia@gmail.com');
+                setPassword('Password123!');
+              }}
+              className="px-2.5 py-1.5 rounded-lg bg-white border border-[#E0E2D8] hover:border-[#4D642D] hover:text-[#4D642D] text-[11px] text-left transition-colors cursor-pointer"
+            >
+              <strong className="block font-bold text-[#4D642D]">🍳 Staf Dapur</strong>
+              <span className="text-[10px] text-[#5F6B4F] truncate block">staf.dapurnia...</span>
+            </button>
+          </div>
+        </div>
+
         {/* Switch to Register */}
         <div className="mt-6 pt-5 border-t border-[#E0E2D8] text-center text-xs text-[#5F6B4F]">
           Belum memiliki akun pengelola?{' '}

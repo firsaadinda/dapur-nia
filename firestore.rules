@@ -51,5 +51,12 @@ service cloud.firestore {
         request.resource.data.status in ['menunggu_bayar', 'dibayar', 'diproses', 'selesai', 'dibatalkan'];
       allow delete: if true;
     }
+
+    // 4. Koleksi: users (Profil Peran Pengguna: Pemilik & Staf)
+    match /users/{userId} {
+      allow read: if true;
+      allow create, update: if true;
+      allow delete: if true;
+    }
   }
 }

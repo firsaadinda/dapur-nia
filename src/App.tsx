@@ -18,6 +18,7 @@ import {
   ShoppingBag,
   BarChart3,
   ShieldCheck,
+  ShieldAlert,
   LogIn,
   LogOut,
   Loader2,
@@ -35,7 +36,7 @@ export type TabId =
 const TAB_STORAGE_KEY = 'dapur_nia_active_tab';
 
 export function App() {
-  const { user, loading: authLoading, signOutUser } = useAuth();
+  const { user, role, loading: authLoading, signOutUser } = useAuth();
   
   // Initial tab determination from URL hash or localStorage
   const getInitialTab = (): TabId => {
@@ -134,7 +135,6 @@ export function App() {
   ];
 
   const userName = user?.displayName || user?.email?.split('@')[0] || 'Pemilik';
-  const userInitial = (userName.charAt(0) || 'P').toUpperCase();
 
   return (
     <div className="min-h-screen bg-[#FCF9F2] text-[#1C2311] flex flex-col font-sans relative">
@@ -207,13 +207,22 @@ export function App() {
               ) : user ? (
                 /* Authenticated User: Display User Name at the top & Keluar button */
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-[#F4F7EF] border border-[#D7DFC9] shadow-xs">
-                    <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#4D642D] text-white flex items-center justify-center text-[10px] sm:text-xs font-bold">
-                      {userInitial}
+                  <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-[#F4F7EF] border border-[#D7DFC9] shadow-xs">
+                    <div
+                      className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full text-white flex items-center justify-center text-[10px] sm:text-xs font-bold ${
+                        role === 'pemilik' ? 'bg-[#C2410C]' : 'bg-[#4D642D]'
+                      }`}
+                    >
+                      {role === 'pemilik' ? '👑' : '🍳'}
                     </div>
-                    <span className="text-xs font-bold text-[#36491C] max-w-[100px] sm:max-w-[160px] truncate">
-                      {userName}
-                    </span>
+                    <div className="flex flex-col text-left">
+                      <span className="text-xs font-bold text-[#36491C] max-w-[85px] sm:max-w-[140px] truncate leading-tight">
+                        {userName}
+                      </span>
+                      <span className="text-[9px] font-semibold text-[#5F6B4F] leading-tight">
+                        {role === 'pemilik' ? 'Pemilik' : 'Staf Dapur'}
+                      </span>
+                    </div>
                   </div>
 
                   <Button
@@ -288,11 +297,12 @@ export function App() {
                 />
               )}
 
-              {/* 2. Kelola Menu (Owner Management with Add, Edit, Delete) */}
+              {/* 2. Kelola Menu (Owner Management with Add, Edit, Delete / Staf Review) */}
               {activeTab === 'kelola-menu' && user && (
                 <MenuModule
                   key={`kelola-menu-${refreshTrigger}`}
                   onMenuChanged={handleDataChanged}
+                  userRole={role}
                 />
               )}
 
@@ -305,7 +315,7 @@ export function App() {
                 />
               )}
 
-              {/* 4. Halaman Daftar (Register Account) */}
+              {/* 4. Halaman Daftar (Register Account with Role selection) */}
               {activeTab === 'daftar' && (
                 <RegisterPage
                   onSuccess={() => setActiveTab('kelola-menu')}
@@ -330,9 +340,31 @@ export function App() {
                 />
               )}
 
-              {/* 7. Laporan Module */}
+              {/* 7. Laporan Module (Khusus Pemilik per PRD 2.2) */}
               {activeTab === 'laporan' && (
-                <LaporanModule key={`laporan-${refreshTrigger}`} />
+                role === 'pemilik' ? (
+                  <LaporanModule key={`laporan-${refreshTrigger}`} />
+                ) : (
+                  <div className="bg-white/80 backdrop-blur-md border border-[#E0E2D8] rounded-2xl p-8 sm:p-12 text-center max-w-lg mx-auto space-y-4 my-8 shadow-xs">
+                    <div className="w-16 h-16 rounded-full bg-[#FEF2F2] border border-[#FEE2E2] flex items-center justify-center mx-auto text-[#DC2626]">
+                      <ShieldAlert className="w-8 h-8" />
+                    </div>
+                    <h3 className="font-heading font-bold text-lg text-[#1C2311]">
+                      Akses Finansial Khusus Pemilik Usaha
+                    </h3>
+                    <p className="text-xs text-[#5F6B4F] leading-relaxed">
+                      Sesuai spesifikasi otorisasi Dapur Nia (PRD 2.2), modul ringkasan omzet harian dan pembukuan finansial hanya dapat diakses oleh akun dengan peran <strong>Pemilik Usaha</strong>.
+                    </p>
+                    <div className="pt-2">
+                      <Button
+                        onClick={() => handleNavigate('pesanan')}
+                        className="bg-[#4D642D] hover:bg-[#36491C] text-white text-xs font-bold h-9 px-4 rounded-xl cursor-pointer"
+                      >
+                        Buka Antrean Pesanan Dapur
+                      </Button>
+                    </div>
+                  </div>
+                )
               )}
             </>
           )}

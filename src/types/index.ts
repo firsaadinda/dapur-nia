@@ -8,6 +8,16 @@ export type OrderStatus =
   | 'selesai'
   | 'dibatalkan';
 
+export type UserRole = 'pemilik' | 'staf';
+
+export interface UserProfile {
+  uid: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  createdAt?: any;
+}
+
 export interface Menu {
   id: string;
   nama: string; // 1 - 60 karakter

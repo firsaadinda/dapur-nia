@@ -1,16 +1,22 @@
 import { useState, useEffect } from 'react';
-import type { Menu } from '@/types';
+import type { Menu, UserRole } from '@/types';
 import { getMenus, addMenu, updateMenu, deleteMenu, resetToDefaultMenus } from '@/services/menuService';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Plus, Pencil, Trash2, CheckCircle2, AlertCircle, RotateCcw, UtensilsCrossed } from 'lucide-react';
+import { Plus, Pencil, Trash2, CheckCircle2, AlertCircle, RotateCcw, UtensilsCrossed, ShieldAlert } from 'lucide-react';
 import { getMenuImagePath } from '@/lib/menuImages';
 import { toast } from 'sonner';
 
-export function MenuModule({ onMenuChanged }: { onMenuChanged?: () => void }) {
+interface MenuModuleProps {
+  onMenuChanged?: () => void;
+  userRole?: UserRole;
+}
+
+export function MenuModule({ onMenuChanged, userRole = 'pemilik' }: MenuModuleProps) {
+  const isOwner = userRole === 'pemilik';
   const [menus, setMenus] = useState<Menu[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -123,30 +129,52 @@ export function MenuModule({ onMenuChanged }: { onMenuChanged?: () => void }) {
       {/* Top action bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/70 backdrop-blur-md p-4 rounded-xl border border-white/60 shadow-sm">
         <div>
-          <h2 className="text-xl font-bold font-heading text-[#36491C] tracking-tight">
-            Kelola Menu
-          </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-bold font-heading text-[#36491C] tracking-tight">
+              Kelola Menu
+            </h2>
+            <span
+              className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                isOwner
+                  ? 'bg-[#FFF7ED] text-[#C2410C] border-[#FFEDD5]'
+                  : 'bg-[#F4F7EF] text-[#4D642D] border-[#D7DFC9]'
+              }`}
+            >
+              {isOwner ? '👑 Pemilik' : '🍳 Staf Dapur (Pantau)'}
+            </span>
+          </div>
           <p className="text-xs text-[#5F6B4F]">
-            Kelola sajian katering: tambah, ubah, dan hapus menu ({menus.length} terdaftar)
+            {isOwner
+              ? `Kelola sajian katering: tambah, ubah, dan hapus menu (${menus.length} terdaftar)`
+              : `Mode Pantau Staf: Pemantauan menu dan sisa kuota dapur (${menus.length} terdaftar)`}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleResetMenus}
-            className="text-xs h-9 border-[#E0E2D8] text-[#5F6B4F] hover:text-[#4D642D] hover:border-[#4D642D] gap-1"
-          >
-            <RotateCcw className="h-3.5 w-3.5" />
-            Muat Ulang
-          </Button>
-          <Button
-            onClick={openAddDialog}
-            className="bg-[#4D642D] hover:bg-[#36491C] text-white font-semibold text-xs h-9 px-4 gap-1.5 shadow-sm rounded-lg"
-          >
-            <Plus className="h-4 w-4" />
-            Tambah Menu
-          </Button>
+          {isOwner ? (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleResetMenus}
+                className="text-xs h-9 border-[#E0E2D8] text-[#5F6B4F] hover:text-[#4D642D] hover:border-[#4D642D] gap-1 cursor-pointer"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                Muat Ulang
+              </Button>
+              <Button
+                onClick={openAddDialog}
+                className="bg-[#4D642D] hover:bg-[#36491C] text-white font-semibold text-xs h-9 px-4 gap-1.5 shadow-sm rounded-lg cursor-pointer"
+              >
+                <Plus className="h-4 w-4" />
+                Tambah Menu
+              </Button>
+            </>
+          ) : (
+            <div className="text-[11px] text-[#5F6B4F] bg-[#F4F7EF] border border-[#E0E2D8] px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+              <ShieldAlert className="h-3.5 w-3.5 text-[#C2410C]" />
+              <span>Ubah harga/menu khusus Pemilik</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -274,24 +302,32 @@ export function MenuModule({ onMenuChanged }: { onMenuChanged?: () => void }) {
                   </div>
 
                   <CardFooter className="px-4 py-3 bg-[#FCF9F2]/40 border-t border-[#E0E2D8] flex justify-end gap-2 rounded-b-xl">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-8 px-4 text-xs border-[#E0E2D8] text-[#1C2311] hover:border-[#4D642D] rounded-full bg-white shadow-xs"
-                      onClick={() => openEditDialog(item)}
-                    >
-                      <Pencil className="h-3.5 w-3.5 mr-1.5 text-[#4D642D]" />
-                      Ubah
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 px-4 text-xs text-[#DC2626] hover:bg-[#FEE2E2] rounded-full"
-                      onClick={() => handleDelete(item.id, item.nama)}
-                    >
-                      <Trash2 className="h-3.5 w-3.5 mr-1.5" />
-                      Hapus
-                    </Button>
+                    {isOwner ? (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 px-4 text-xs border-[#E0E2D8] text-[#1C2311] hover:border-[#4D642D] rounded-full bg-white shadow-xs cursor-pointer"
+                          onClick={() => openEditDialog(item)}
+                        >
+                          <Pencil className="h-3.5 w-3.5 mr-1.5 text-[#4D642D]" />
+                          Ubah
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-4 text-xs text-[#DC2626] hover:bg-[#FEE2E2] rounded-full cursor-pointer"
+                          onClick={() => handleDelete(item.id, item.nama)}
+                        >
+                          <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                          Hapus
+                        </Button>
+                      </>
+                    ) : (
+                      <span className="text-[11px] text-[#5F6B4F] italic">
+                        Pantau Dapur (Read-Only)
+                      </span>
+                    )}
                   </CardFooter>
                 </Card>
               );
