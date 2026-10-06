@@ -16,6 +16,7 @@ import {
   Crown,
   ChefHat,
   Info,
+  ShieldCheck,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -26,7 +27,7 @@ interface RegisterPageProps {
 }
 
 export function RegisterPage({ onSuccess, onGoToLogin, onGoToHome }: RegisterPageProps) {
-  const { signUp } = useAuth();
+  const { signUp, signInWithGoogle } = useAuth();
   const [nama, setNama] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,6 +35,7 @@ export function RegisterPage({ onSuccess, onGoToLogin, onGoToHome }: RegisterPag
   const [role, setRole] = useState<UserRole>('pemilik');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const getFriendlyErrorMessage = (err: any): string => {
@@ -47,17 +49,19 @@ export function RegisterPage({ onSuccess, onGoToLogin, onGoToHome }: RegisterPag
     if (code === 'auth/invalid-email') {
       return 'Format alamat email tidak valid.';
     }
+    if (code === 'auth/popup-closed-by-user') {
+      return 'Jendela pendaftaran Google ditutup sebelum selesai.';
+    }
     return err?.message || 'Gagal mendaftarkan akun. Silakan coba lagi.';
   };
 
   const handleSelectRole = (selectedRole: UserRole) => {
     setRole(selectedRole);
-    // Autofill email example if empty or matching previous role pattern
     if (!email || email === 'pemilik.dapurnia@gmail.com' || email === 'staf.dapurnia@gmail.com') {
       setEmail(selectedRole === 'pemilik' ? 'pemilik.dapurnia@gmail.com' : 'staf.dapurnia@gmail.com');
     }
-    if (!nama || nama === 'Mbak Dina (Pemilik)' || nama === 'Rani (Staf Dapur)') {
-      setNama(selectedRole === 'pemilik' ? 'Mbak Dina (Pemilik)' : 'Rani (Staf Dapur)');
+    if (!nama || nama === 'Bu Nia (Pemilik)' || nama === 'Rani (Staf Dapur)') {
+      setNama(selectedRole === 'pemilik' ? 'Bu Nia (Pemilik)' : 'Rani (Staf Dapur)');
     }
   };
 
@@ -66,7 +70,7 @@ export function RegisterPage({ onSuccess, onGoToLogin, onGoToHome }: RegisterPag
     setError(null);
 
     if (!nama.trim()) {
-      setError('Silakan masukkan nama lengkap atau nama pengelola.');
+      setError('Silakan masukkan nama lengkap.');
       return;
     }
     if (nama.trim().length > 60) {
@@ -78,7 +82,7 @@ export function RegisterPage({ onSuccess, onGoToLogin, onGoToHome }: RegisterPag
       return;
     }
     if (password.length < 6) {
-      setError('Kata sandi harus minimal 6 karakter.');
+      setError('Kata sandi harus minimal 6 karakter (disarankan 12-16 karakter).');
       return;
     }
     if (password !== confirmPassword) {
@@ -89,8 +93,8 @@ export function RegisterPage({ onSuccess, onGoToLogin, onGoToHome }: RegisterPag
     setLoading(true);
     try {
       await signUp(nama, email, password, role);
-      const roleText = role === 'pemilik' ? 'Pemilik Usaha' : 'Staf Dapur';
-      toast.success(`Akun ${roleText} berhasil dibuat! Selamat datang, ${nama}`);
+      const roleText = role === 'pemilik' ? 'Bu Nia (Pemilik)' : 'Staf Dapur';
+      toast.success(`Akun ${roleText} berhasil didaftarkan ke Firestore!`);
       onSuccess();
     } catch (err: any) {
       const msg = getFriendlyErrorMessage(err);
@@ -98,6 +102,23 @@ export function RegisterPage({ onSuccess, onGoToLogin, onGoToHome }: RegisterPag
       toast.error(msg);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    setError(null);
+    setGoogleLoading(true);
+    try {
+      const user = await signInWithGoogle();
+      const name = user.displayName || 'Pengguna';
+      toast.success(`Berhasil terhubung dengan Google! Selamat datang, ${name}`);
+      onSuccess();
+    } catch (err: any) {
+      const msg = getFriendlyErrorMessage(err);
+      setError(msg);
+      toast.error(msg);
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -126,7 +147,7 @@ export function RegisterPage({ onSuccess, onGoToLogin, onGoToHome }: RegisterPag
             Daftar Akun Pengguna
           </h1>
           <p className="text-xs text-[#5F6B4F]">
-            Daftarkan akun <strong>Pemilik</strong> atau <strong>Staf Dapur</strong> sesuai peran di Dapur Nia.
+            Daftarkan akun <strong>Bu Nia (Pemilik)</strong> atau <strong>Staf Dapur</strong> ke database katering.
           </p>
         </div>
 
@@ -137,6 +158,50 @@ export function RegisterPage({ onSuccess, onGoToLogin, onGoToHome }: RegisterPag
             <span>{error}</span>
           </div>
         )}
+
+        {/* Google Sign-Up Button */}
+        <div className="mb-4">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={googleLoading || loading}
+            onClick={handleGoogleSignUp}
+            className="w-full h-11 border-[#E0E2D8] hover:bg-[#F4F7EF] hover:border-[#36491C] text-[#1C2311] font-semibold text-xs rounded-xl flex items-center justify-center gap-2.5 transition-all shadow-2xs cursor-pointer"
+          >
+            {googleLoading ? (
+              <span className="h-4 w-4 border-2 border-[#4D642D] border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <svg className="w-4 h-4" viewBox="0 0 24 24">
+                <path
+                  fill="#4285F4"
+                  d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.02h3.88c2.27-2.09 3.66-5.17 3.66-9.11z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.02c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.24v3.12C3.26 21.36 7.33 24 12 24z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.59H1.24C.45 8.16 0 9.98 0 12s.45 3.84 1.24 5.41l4.04-3.12z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.24 6.59l4.04 3.12c.95-2.83 3.6-4.96 6.72-4.96z"
+                />
+              </svg>
+            )}
+            <span>Daftar Cepat dengan Akun Google</span>
+          </Button>
+
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-[#E0E2D8]" />
+            </div>
+            <div className="relative flex justify-center text-[11px] uppercase">
+              <span className="bg-white px-3 text-[#5F6B4F] font-medium">atau daftar dengan email</span>
+            </div>
+          </div>
+        </div>
 
         {/* Register Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -163,7 +228,7 @@ export function RegisterPage({ onSuccess, onGoToLogin, onGoToHome }: RegisterPag
                   <Crown className="h-4 w-4" />
                 </div>
                 <div>
-                  <strong className="text-xs font-heading font-bold block">Pemilik Usaha</strong>
+                  <strong className="text-xs font-heading font-bold block">Bu Nia (Pemilik)</strong>
                   <span className="text-[10px] text-[#5F6B4F] leading-tight block mt-0.5">
                     Kelola menu, stok, omzet & finansial
                   </span>
@@ -206,7 +271,7 @@ export function RegisterPage({ onSuccess, onGoToLogin, onGoToHome }: RegisterPag
               <Input
                 id="reg-name"
                 type="text"
-                placeholder={role === 'pemilik' ? 'Contoh: Mbak Dina (Pemilik)' : 'Contoh: Rani (Staf Dapur)'}
+                placeholder={role === 'pemilik' ? 'Contoh: Bu Nia' : 'Contoh: Rani (Staf Dapur)'}
                 value={nama}
                 maxLength={60}
                 onChange={(e) => setNama(e.target.value)}
@@ -243,14 +308,14 @@ export function RegisterPage({ onSuccess, onGoToLogin, onGoToHome }: RegisterPag
           {/* Kata Sandi */}
           <div className="space-y-1.5">
             <Label htmlFor="reg-password" className="text-xs font-bold text-[#1C2311]">
-              Kata Sandi (Minimal 6 Karakter)
+              Kata Sandi
             </Label>
             <div className="relative">
               <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#5F6B4F]" />
               <Input
                 id="reg-password"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="Minimal 6 karakter"
+                placeholder="Masukkan kata sandi baru"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="pl-10 pr-10 h-11 border-[#E0E2D8] focus-visible:ring-[#4D642D]"
@@ -264,6 +329,14 @@ export function RegisterPage({ onSuccess, onGoToLogin, onGoToHome }: RegisterPag
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
+            </div>
+
+            {/* Ketentuan Sandi yang Diminta */}
+            <div className="p-2.5 rounded-lg bg-[#F4F7EF] border border-[#D7DFC9] text-[11px] text-[#36491C] leading-relaxed flex items-start gap-2 mt-1.5">
+              <ShieldCheck className="h-4 w-4 shrink-0 text-[#4D642D] mt-0.5" />
+              <span>
+                <strong>Ketentuan Sandi:</strong> Minimal 12 hingga 16 karakter, Gunakan gabungan huruf kapital (A-Z), huruf kecil (a-z), angka (0-9), serta simbol atau tanda baca.
+              </span>
             </div>
           </div>
 
@@ -288,16 +361,16 @@ export function RegisterPage({ onSuccess, onGoToLogin, onGoToHome }: RegisterPag
           </div>
 
           {/* Quick Tip info */}
-          <div className="p-3 rounded-xl bg-[#F4F7EF] border border-[#D7DFC9] text-[#36491C] text-[11px] flex items-start gap-2">
-            <Info className="h-4 w-4 shrink-0 text-[#4D642D] mt-0.5" />
+          <div className="p-2.5 rounded-xl bg-[#FFF7ED] border border-[#FFEDD5] text-[#C2410C] text-[11px] flex items-start gap-2">
+            <Info className="h-4 w-4 shrink-0 text-[#C2410C] mt-0.5" />
             <span>
-              Peran <strong>{role === 'pemilik' ? 'Pemilik Usaha' : 'Staf Dapur'}</strong> akan disimpan secara otomatis ke profil pengguna basis data Firebase.
+              Data pengguna akan langsung tersimpan di koleksi Firestore <strong>pengguna</strong> (di bawah pesanan).
             </span>
           </div>
 
           <Button
             type="submit"
-            disabled={loading}
+            disabled={loading || googleLoading}
             className={`w-full font-bold h-11 rounded-xl shadow-xs gap-2 transition-all mt-2 cursor-pointer ${
               role === 'pemilik'
                 ? 'bg-[#C2410C] hover:bg-[#9A3412] text-white'
@@ -307,19 +380,19 @@ export function RegisterPage({ onSuccess, onGoToLogin, onGoToHome }: RegisterPag
             {loading ? (
               <span className="flex items-center gap-2">
                 <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Mendaftarkan Akun {role === 'pemilik' ? 'Pemilik' : 'Staf'}...
+                Mendaftarkan Akun {role === 'pemilik' ? 'Bu Nia' : 'Staf'}...
               </span>
             ) : (
               <>
                 <UserPlus className="h-4 w-4" />
-                Daftar Akun {role === 'pemilik' ? 'Pemilik' : 'Staf'}
+                Daftar Akun {role === 'pemilik' ? 'Bu Nia (Pemilik)' : 'Staf'}
               </>
             )}
           </Button>
         </form>
 
         {/* Switch to Login */}
-        <div className="mt-6 pt-5 border-t border-[#E0E2D8] text-center text-xs text-[#5F6B4F]">
+        <div className="mt-5 pt-4 border-t border-[#E0E2D8] text-center text-xs text-[#5F6B4F]">
           Sudah memiliki akun?{' '}
           <button
             type="button"

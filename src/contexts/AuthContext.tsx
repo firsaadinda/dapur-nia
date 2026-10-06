@@ -3,12 +3,13 @@ import {
   type User,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signInWithPopup,
   signOut,
   updateProfile,
   onAuthStateChanged,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { auth, db } from '@/lib/firebase';
+import { auth, db, googleProvider } from '@/lib/firebase';
 import type { UserRole } from '@/types';
 
 interface AuthContextType {
@@ -16,6 +17,7 @@ interface AuthContextType {
   role: UserRole;
   loading: boolean;
   signIn: (email: string, pass: string) => Promise<User>;
+  signInWithGoogle: () => Promise<User>;
   signUp: (name: string, email: string, pass: string, role?: UserRole) => Promise<User>;
   signOutUser: () => Promise<void>;
 }
@@ -30,29 +32,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [role, setRole] = useState<UserRole>('pemilik');
   const [loading, setLoading] = useState(true);
 
-  // Helper to fetch user role from Firestore
+  // Helper to fetch user role from Firestore 'pengguna' collection
   const fetchUserRole = async (currentUser: User): Promise<UserRole> => {
     // If user email or display name indicates staff
-    if (currentUser.email?.toLowerCase().includes('staf') || currentUser.email?.toLowerCase().includes('rani')) {
+    const emailLower = (currentUser.email || '').toLowerCase();
+    if (emailLower.includes('staf') || emailLower.includes('rani')) {
       return 'staf';
+    }
+    if (emailLower.includes('pemilik') || emailLower.includes('nia')) {
+      return 'pemilik';
     }
 
     if (db) {
       try {
-        const userDocRef = doc(db, 'users', currentUser.uid);
+        // Cek koleksi 'pengguna'
+        const userDocRef = doc(db, 'pengguna', currentUser.uid);
         const snapshot = await getDoc(userDocRef);
         if (snapshot.exists()) {
           const data = snapshot.data();
-          if (data?.role === 'staf' || data?.role === 'pemilik') {
-            return data.role;
+          const roleValue = data?.peran || data?.role;
+          if (roleValue === 'staf' || roleValue === 'pemilik') {
+            return roleValue;
           }
         }
       } catch (err) {
-        console.warn('Gagal membaca role pengguna dari Firestore:', err);
+        console.warn('Gagal membaca role pengguna dari koleksi pengguna:', err);
       }
     }
 
-    // Default role is pemilik
+    // Default role is pemilik (Bu Nia)
     return 'pemilik';
   };
 
@@ -86,12 +94,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
+  const saveToPenggunaDatabase = async (u: User, name: string, chosenRole: UserRole, loginMethod: string) => {
+    if (db) {
+      try {
+        const profileData = {
+          id: u.uid,
+          nama: name || u.displayName || (chosenRole === 'pemilik' ? 'Bu Nia' : 'Staf Dapur'),
+          email: u.email || '',
+          peran: chosenRole,
+          role: chosenRole,
+          metode_masuk: loginMethod,
+          status: 'aktif',
+          terakhir_masuk: serverTimestamp(),
+          dibuat_pada: serverTimestamp(),
+        };
+
+        // Simpan ke koleksi 'pengguna' (di bawah pesanan)
+        await setDoc(doc(db, 'pengguna', u.uid), profileData, { merge: true });
+
+        // Simpan ke 'users' juga untuk backward compatibility
+        await setDoc(doc(db, 'users', u.uid), profileData, { merge: true });
+      } catch (err) {
+        console.warn('Gagal menyimpan ke koleksi pengguna:', err);
+      }
+    }
+  };
+
   const signIn = async (email: string, pass: string): Promise<User> => {
     if (auth) {
       const credential = await signInWithEmailAndPassword(auth, email.trim(), pass);
       setUser(credential.user);
       const userRole = await fetchUserRole(credential.user);
       setRole(userRole);
+
+      // Simpan jejak masuk ke Firestore pengguna
+      await saveToPenggunaDatabase(
+        credential.user,
+        credential.user.displayName || (userRole === 'pemilik' ? 'Bu Nia' : 'Staf Dapur'),
+        userRole,
+        'email_password'
+      );
+
       return credential.user;
     } else {
       // Offline simulated user
@@ -100,7 +143,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const mockUser = {
         uid: `sim_${Date.now()}`,
         email: email.trim(),
-        displayName: email.split('@')[0],
+        displayName: isStaff ? 'Rani (Staf Dapur)' : 'Bu Nia',
       } as unknown as User;
 
       localStorage.setItem(LOCAL_AUTH_KEY, JSON.stringify(mockUser));
@@ -111,34 +154,54 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const signInWithGoogle = async (): Promise<User> => {
+    if (auth) {
+      const credential = await signInWithPopup(auth, googleProvider);
+      setUser(credential.user);
+      const userRole = await fetchUserRole(credential.user);
+      setRole(userRole);
+
+      // Simpan data login Google ke koleksi 'pengguna' di Firestore
+      await saveToPenggunaDatabase(
+        credential.user,
+        credential.user.displayName || 'Pengguna Google',
+        userRole,
+        'google'
+      );
+
+      return credential.user;
+    } else {
+      // Offline simulation for Google Sign-In
+      const mockUser = {
+        uid: `google_sim_${Date.now()}`,
+        email: 'bunia.dapurnia@gmail.com',
+        displayName: 'Bu Nia',
+      } as unknown as User;
+
+      localStorage.setItem(LOCAL_AUTH_KEY, JSON.stringify(mockUser));
+      localStorage.setItem(LOCAL_ROLE_KEY, 'pemilik');
+      setUser(mockUser);
+      setRole('pemilik');
+      return mockUser;
+    }
+  };
+
   const signUp = async (
     name: string,
     email: string,
     pass: string,
     chosenRole: UserRole = 'pemilik'
   ): Promise<User> => {
+    const finalName = name.trim() || (chosenRole === 'pemilik' ? 'Bu Nia' : 'Staf Dapur');
+
     if (auth) {
       const credential = await createUserWithEmailAndPassword(auth, email.trim(), pass);
-      if (name.trim()) {
-        await updateProfile(credential.user, {
-          displayName: name.trim(),
-        });
-      }
+      await updateProfile(credential.user, {
+        displayName: finalName,
+      });
 
-      // Simpan role dan profil pengguna ke koleksi users di Firestore
-      if (db) {
-        try {
-          await setDoc(doc(db, 'users', credential.user.uid), {
-            uid: credential.user.uid,
-            name: name.trim(),
-            email: email.trim(),
-            role: chosenRole,
-            createdAt: serverTimestamp(),
-          });
-        } catch (err) {
-          console.warn('Gagal menyimpan profil pengguna ke Firestore:', err);
-        }
-      }
+      // Simpan data pendaftaran ke koleksi 'pengguna' di Firestore
+      await saveToPenggunaDatabase(credential.user, finalName, chosenRole, 'email_password');
 
       setUser(credential.user);
       setRole(chosenRole);
@@ -148,7 +211,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const mockUser = {
         uid: `sim_${Date.now()}`,
         email: email.trim(),
-        displayName: name.trim() || email.split('@')[0],
+        displayName: finalName,
       } as unknown as User;
 
       localStorage.setItem(LOCAL_AUTH_KEY, JSON.stringify(mockUser));
@@ -170,7 +233,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, role, loading, signIn, signUp, signOutUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        role,
+        loading,
+        signIn,
+        signInWithGoogle,
+        signUp,
+        signOutUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

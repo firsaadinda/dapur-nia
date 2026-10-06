@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { getFirestore, type Firestore } from 'firebase/firestore';
-import { getAuth, type Auth } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, type Auth } from 'firebase/auth';
 
 const env: Record<string, string | undefined> =
   (typeof import.meta !== 'undefined' && (import.meta as any).env) ||
@@ -37,6 +37,7 @@ export const isFirebaseConfigured = Boolean(
 let app: FirebaseApp | null = null;
 let db: Firestore | null = null;
 let auth: Auth | null = null;
+const googleProvider = new GoogleAuthProvider();
 
 if (isFirebaseConfigured) {
   try {
@@ -48,4 +49,4 @@ if (isFirebaseConfigured) {
   }
 }
 
-export { app, db, auth };
+export { app, db, auth, googleProvider };

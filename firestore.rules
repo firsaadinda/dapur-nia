@@ -52,7 +52,14 @@ service cloud.firestore {
       allow delete: if true;
     }
 
-    // 4. Koleksi: users (Profil Peran Pengguna: Pemilik & Staf)
+    // 4. Koleksi: pengguna (Data Akun Fitur Login)
+    match /pengguna/{userId} {
+      allow read: if true;
+      allow create, update: if true;
+      allow delete: if true;
+    }
+
+    // 5. Koleksi: users (Profil Peran Pengguna)
     match /users/{userId} {
       allow read: if true;
       allow create, update: if true;

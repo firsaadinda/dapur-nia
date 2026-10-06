@@ -134,7 +134,10 @@ export function App() {
     { id: 'laporan' as const, label: 'Laporan', icon: BarChart3 },
   ];
 
-  const userName = user?.displayName || user?.email?.split('@')[0] || 'Pemilik';
+  const userName =
+    user?.displayName === 'Firsa Adinda (Pemilik)' || user?.displayName === 'Mbak Dina (Pemilik)'
+      ? 'Bu Nia'
+      : user?.displayName || user?.email?.split('@')[0] || (role === 'pemilik' ? 'Bu Nia' : 'Staf Dapur');
 
   return (
     <div className="min-h-screen bg-[#FCF9F2] text-[#1C2311] flex flex-col font-sans relative">
