@@ -281,14 +281,14 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="text-[11px] font-mono font-bold text-[#5F6B4F]">
-                            #{o.id.slice(-6)}
+                            {o.id.startsWith('pes') ? `#${o.id}` : `#pes-${o.id.slice(-4)}`}
                           </span>
                           <span className="text-[10px] text-[#4D642D] underline font-medium">
                             Lihat Rincian
                           </span>
                         </div>
                         <CardTitle className="text-base font-bold font-heading text-[#36491C] mt-0.5 hover:underline">
-                          {o.nama_pelanggan}
+                          {o.nama_pelanggan.replace(/^Ibu\s+/i, '')}
                         </CardTitle>
                         <div className="text-[11px] text-[#5F6B4F] flex items-center gap-2 mt-0.5">
                           <span className="flex items-center gap-1">
@@ -645,7 +645,11 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
           {selectedOrderDetail && (
             <div className="space-y-4">
               <div>
-                <p className="text-[11px] font-mono font-bold text-[#5F6B4F]">#{selectedOrderDetail.id}</p>
+                <p className="text-[11px] font-mono font-bold text-[#5F6B4F]">
+                  {selectedOrderDetail.id.startsWith('pes')
+                    ? `#${selectedOrderDetail.id}`
+                    : `#pes-${selectedOrderDetail.id.slice(-4)}`}
+                </p>
                 <DialogTitle className="text-lg font-bold font-heading text-[#1C2311]">
                   Rincian Pesanan
                 </DialogTitle>
@@ -702,7 +706,7 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
 
               {/* Data Pelanggan & Bukti/Catatan */}
               <div className="text-xs space-y-1.5 text-gray-700 bg-stone-50/60 p-3 rounded-xl border border-stone-200/60">
-                <p><strong>Pelanggan:</strong> {selectedOrderDetail.nama_pelanggan} ({selectedOrderDetail.pelanggan_id})</p>
+                <p><strong>Pelanggan:</strong> {selectedOrderDetail.nama_pelanggan.replace(/^Ibu\s+/i, '')} ({selectedOrderDetail.pelanggan_id})</p>
                 <p><strong>Alamat:</strong> {selectedOrderDetail.alamat_kirim}</p>
                 <p><strong>Tanggal Pesanan:</strong> {selectedOrderDetail.tanggal}</p>
                 {(selectedOrderDetail.bukti_bayar || (selectedOrderDetail.status !== 'menunggu_bayar' && selectedOrderDetail.status !== 'dibatalkan')) && (

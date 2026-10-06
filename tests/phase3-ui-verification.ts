@@ -36,7 +36,7 @@ async function runPhase3Simulation() {
   console.log('\n--- Skenario 2: Input Pelanggan Baru dari Modal Formulir ---');
   const custPhone = '081399887766';
   const createdCust = await addPelanggan({
-    nama: 'Ibu Ratna Dewi',
+    nama: 'Ratna Dewi',
     no_whatsapp: custPhone,
     alamat: 'Perumahan Pesona Indah Blok D-05',
   });

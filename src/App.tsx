@@ -376,7 +376,7 @@ export function App() {
                       Akses Finansial Khusus Pemilik Usaha
                     </h3>
                     <p className="text-xs text-[#5F6B4F] leading-relaxed">
-                      Sesuai spesifikasi otorisasi Dapur Nia (PRD 2.2), modul ringkasan omzet harian dan pembukuan finansial hanya dapat diakses oleh akun dengan peran <strong>Pemilik Usaha</strong>.
+                      Modul ringkasan omzet harian dan pembukuan finansial hanya dapat diakses oleh akun dengan peran <strong>Pemilik Usaha</strong>.
                     </p>
                     <div className="pt-2">
                       <Button
