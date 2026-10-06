@@ -154,10 +154,16 @@ export function PesananModule({ onOrderChanged }: { onOrderChanged?: () => void 
     }
   };
 
-  const filteredOrders = orders.filter((o) => {
-    if (filterStatus === 'semua') return true;
-    return o.status === filterStatus;
-  });
+  const filteredOrders = orders
+    .filter((o) => {
+      if (filterStatus === 'semua') return true;
+      return o.status === filterStatus;
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.dibuat_pada || a.tanggal).getTime();
+      const dateB = new Date(b.dibuat_pada || b.tanggal).getTime();
+      return dateB - dateA;
+    });
 
   return (
     <div className="space-y-4">
