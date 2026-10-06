@@ -67,7 +67,7 @@ async function testConnection() {
     if (db) {
       try {
         await terminate(db);
-      } catch {}
+      } catch { }
     }
     process.exit(1);
   }

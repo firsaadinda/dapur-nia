@@ -140,7 +140,7 @@ export function MenuModule({ onMenuChanged, userRole = 'pemilik' }: MenuModulePr
                   : 'bg-[#F4F7EF] text-[#4D642D] border-[#D7DFC9]'
               }`}
             >
-              {isOwner ? '👑 Pemilik' : '🍳 Staf Dapur (Pantau)'}
+              {isOwner ? 'Pemilik' : 'Staf Dapur (Pantau)'}
             </span>
           </div>
           <p className="text-xs text-[#5F6B4F]">
@@ -204,7 +204,9 @@ export function MenuModule({ onMenuChanged, userRole = 'pemilik' }: MenuModulePr
         {/* Empty state */}
         {!loading && !error && menus.length === 0 && (
           <div className="bg-white/70 backdrop-blur-md border border-dashed border-[#E0E2D8] rounded-xl p-16 text-center space-y-4">
-            <div className="text-5xl">🍽️</div>
+            <div className="w-12 h-12 rounded-full bg-[#F4F7EF] flex items-center justify-center mx-auto text-[#74835F]">
+              <UtensilsCrossed className="w-6 h-6 stroke-[1.75]" />
+            </div>
             <h3 className="font-heading font-black text-2xl text-[#1C2311]">Belum Ada Menu</h3>
             <p className="text-[#5F6B4F]">Mulai tambahkan menu katering di atas.</p>
           </div>

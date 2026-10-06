@@ -22,6 +22,8 @@ import {
   LogIn,
   LogOut,
   Loader2,
+  Crown,
+  Lock,
 } from 'lucide-react';
 
 export type TabId =
@@ -95,11 +97,13 @@ export function App() {
   }, []);
 
   // Protected Route Logic:
-  // When user is not authenticated and attempts to open kelola-menu, redirect to masuk
+  // Tamu tidak dapat mengakses Kelola Menu, Pelanggan, Pesanan, dan Laporan
+  const protectedTabs: TabId[] = ['kelola-menu', 'pelanggan', 'pesanan', 'laporan'];
+
   useEffect(() => {
-    if (!authLoading && !user && activeTab === 'kelola-menu') {
+    if (!authLoading && !user && protectedTabs.includes(activeTab)) {
       setActiveTab('masuk');
-      toast.info('Silakan masuk terlebih dahulu untuk mengakses halaman Kelola Menu.');
+      toast.info('Halaman ini khusus pengelola. Silakan masuk terlebih dahulu.');
     }
   }, [authLoading, user, activeTab]);
 
@@ -108,9 +112,9 @@ export function App() {
   };
 
   const handleNavigate = (tab: TabId) => {
-    if (tab === 'kelola-menu' && !user) {
+    if (protectedTabs.includes(tab) && !user) {
       setActiveTab('masuk');
-      toast.info('Silakan masuk terlebih dahulu untuk mengelola menu.');
+      toast.info('Halaman ini khusus pengelola. Silakan masuk terlebih dahulu.');
       return;
     }
     setActiveTab(tab);
@@ -183,6 +187,7 @@ export function App() {
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const active = activeTab === item.id;
+                const isRestrictedForGuest = !user && protectedTabs.includes(item.id);
                 return (
                   <button
                     key={item.id}
@@ -190,11 +195,16 @@ export function App() {
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-heading font-semibold transition-all cursor-pointer ${
                       active
                         ? 'bg-[#4D642D] text-white shadow-xs'
+                        : isRestrictedForGuest
+                        ? 'text-[#8E9B7E] hover:text-[#36491C] hover:bg-white/70'
                         : 'text-[#5F6B4F] hover:text-[#1C2311] hover:bg-white'
                     }`}
                   >
                     <Icon className="h-3.5 w-3.5" />
-                    {item.label}
+                    <span>{item.label}</span>
+                    {isRestrictedForGuest && (
+                      <Lock className="h-2.5 w-2.5 opacity-60 text-[#8E9B7E]" />
+                    )}
                   </button>
                 );
               })}
@@ -216,7 +226,11 @@ export function App() {
                         role === 'pemilik' ? 'bg-[#C2410C]' : 'bg-[#4D642D]'
                       }`}
                     >
-                      {role === 'pemilik' ? '👑' : '🍳'}
+                      {role === 'pemilik' ? (
+                        <Crown className="h-3 w-3 text-white" />
+                      ) : (
+                        <ChefHat className="h-3 w-3 text-white" />
+                      )}
                     </div>
                     <div className="flex flex-col text-left">
                       <span className="text-xs font-bold text-[#36491C] max-w-[85px] sm:max-w-[140px] truncate leading-tight">
@@ -263,6 +277,7 @@ export function App() {
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const active = activeTab === item.id;
+                const isRestrictedForGuest = !user && protectedTabs.includes(item.id);
                 return (
                   <button
                     key={item.id}
@@ -270,11 +285,16 @@ export function App() {
                     className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-heading font-semibold whitespace-nowrap transition-all cursor-pointer ${
                       active
                         ? 'bg-[#4D642D] text-white shadow-xs'
+                        : isRestrictedForGuest
+                        ? 'text-[#8E9B7E] bg-white/70 border border-[#E0E2D8]'
                         : 'text-[#5F6B4F] hover:text-[#1C2311] bg-white border border-[#E0E2D8]'
                     }`}
                   >
                     <Icon className="h-3.5 w-3.5" />
-                    {item.label}
+                    <span>{item.label}</span>
+                    {isRestrictedForGuest && (
+                      <Lock className="h-2.5 w-2.5 opacity-60 text-[#8E9B7E]" />
+                    )}
                   </button>
                 );
               })}
@@ -328,7 +348,7 @@ export function App() {
               )}
 
               {/* 5. Pelanggan Module */}
-              {activeTab === 'pelanggan' && (
+              {activeTab === 'pelanggan' && user && (
                 <PelangganModule
                   key={`pelanggan-${refreshTrigger}`}
                   onPelangganChanged={handleDataChanged}
@@ -336,7 +356,7 @@ export function App() {
               )}
 
               {/* 6. Pesanan Module */}
-              {activeTab === 'pesanan' && (
+              {activeTab === 'pesanan' && user && (
                 <PesananModule
                   key={`pesanan-${refreshTrigger}`}
                   onOrderChanged={handleDataChanged}
@@ -344,7 +364,7 @@ export function App() {
               )}
 
               {/* 7. Laporan Module (Khusus Pemilik per PRD 2.2) */}
-              {activeTab === 'laporan' && (
+              {activeTab === 'laporan' && user && (
                 role === 'pemilik' ? (
                   <LaporanModule key={`laporan-${refreshTrigger}`} />
                 ) : (
